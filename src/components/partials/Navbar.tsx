@@ -13,6 +13,10 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import DashboardChart from '../shared/DashboardChart';
 import DashboardSub from '../shared/DashboardSub';
+import DeviceContainer from '../shared/DeviceContainer';
+import ServiceContainer from '../shared/ServiceContainer';
+import NumberContainer from '../shared/NumberContainer';
+import ReportContainer from '../shared/ReportContainer';
 
 const Navbar = () => {
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
@@ -24,7 +28,7 @@ const Navbar = () => {
 
     return (
         <>
-            <div className="h-screen w-screen flex">
+            <div className="h-screen w-screen flex z-20">
                 <Tab.Group
                     selectedIndex={selectedIndex}
                     onChange={setSelectedIndex}
@@ -137,21 +141,21 @@ const Navbar = () => {
                                         <div
                                             onMouseEnter={() => toggle(true)}
                                             onMouseLeave={() => toggle(false)}
-                                            className="relative"
+                                            className="relative z-20"
                                         >
                                             <div className="h-20 flex items-center relative">
                                                 <EllipsisVerticalIcon className="w-12 h-12 pr-4 " />
                                             </div>
-                                            <div className="w-[220px] absolute top-0 left-full rounded-tr-2xl ">
+                                            <div className="w-[220px] absolute bg-white top-0 left-full rounded-tr-2xl ">
                                                 {toggleSubMenu && (
                                                     <ul>
-                                                        <li className="flex hover:bg-orange-100 pl-8 rounded-tr-3xl hover:text-orange-500 text-3xl h-20 items-center text-gray-600">
+                                                        <li className="flex hover:bg-orange-400 pl-8 rounded-tr-3xl hover:text-white text-3xl h-20 items-center text-gray-600">
                                                             Quản lý vài trò
                                                         </li>
-                                                        <li className="flex text-3xl hover:bg-orange-100 pl-8 hover:text-orange-500 h-20 items-center text-gray-600">
+                                                        <li className="flex text-3xl hover:bg-orange-400 pl-8 hover:text-white h-20 items-center text-gray-600">
                                                             Quản lý tài khoản
                                                         </li>
-                                                        <li className="flex text-3xl hover:bg-orange-100 pl-8 rounded-br-3xl hover:text-orange-500 h-20 items-center text-gray-600">
+                                                        <li className="flex text-3xl hover:bg-orange-400 pl-8 rounded-br-3xl hover:text-white h-20 items-center text-gray-600">
                                                             Nhật ký người dùng
                                                         </li>
                                                     </ul>
@@ -178,10 +182,26 @@ const Navbar = () => {
                                 <DashboardSub />
                             </div>
                         </Tab.Panel>
-                        <Tab.Panel></Tab.Panel>
-                        <Tab.Panel></Tab.Panel>
-                        <Tab.Panel></Tab.Panel>
-                        <Tab.Panel></Tab.Panel>
+                        <Tab.Panel className="full-size flex flex-col">
+                            <div className="flex">
+                                <DeviceContainer />
+                            </div>
+                        </Tab.Panel>
+                        <Tab.Panel className="full-size flex flex-col">
+                            <div className="flex">
+                                <ServiceContainer />
+                            </div>
+                        </Tab.Panel>
+                        <Tab.Panel className="full-size flex flex-col">
+                            <div className="flex">
+                                <NumberContainer />
+                            </div>
+                        </Tab.Panel>
+                        <Tab.Panel className="full-size flex flex-col">
+                            <div className="flex">
+                                <ReportContainer />
+                            </div>
+                        </Tab.Panel>
                         <Tab.Panel></Tab.Panel>
                     </Tab.Panels>
                 </Tab.Group>

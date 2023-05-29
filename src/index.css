@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100;200300;400;500;600&family=Nunito:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;700;800;900&family=Raleway:wght@400;500;700;800;900&display=swap');
 
 @tailwind base;
@@ -91,6 +91,7 @@ abbr {
     border-radius: 8px !important;
     height: 50px !important;
 }
+
 .react-calendar__month-view__days__day--weekend {
     color: #000 !important;
 }

@@ -47,10 +47,10 @@ const DashboardChart = () => {
     return (
         <>
             <div className="w-full h-screen bg-gray-200">
-                <div className="mx-12 my-12 text-orange-500 text-3xl font-bold font-primary">
+                <div className="mx-12 my-16 text-orange-500 text-3xl font-bold font-primary">
                     Dashboard
                 </div>
-                <div className="mx-12 my-6 text-4xl font-extrabold font-primary text-orange-500">
+                <div className="mx-12 my-8 text-4xl font-extrabold font-primary text-orange-500">
                     Biểu đồ cấp số
                 </div>
                 <div className="w-full flex space-x-12 absolute-center my-16">
