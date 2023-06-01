@@ -1,6 +1,9 @@
 import { BellIcon } from '@heroicons/react/24/outline';
+import { auth } from '../../server/firebase';
 
 const User = () => {
+    const user = auth.currentUser;
+
     return (
         <>
             <div className="h-20 flex justify-end w-full my-4">
@@ -20,7 +23,7 @@ const User = () => {
                     </div>
                     <div>
                         <div className="text-gray-500">Xin chào</div>
-                        <div className="text-2xl">Nguyễn Thị Quỳnh Anh</div>
+                        <div className="text-2xl">{user?.email}</div>
                     </div>
                 </div>
             </div>

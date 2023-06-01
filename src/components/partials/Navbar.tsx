@@ -17,6 +17,8 @@ import DeviceContainer from '../shared/DeviceContainer';
 import ServiceContainer from '../shared/ServiceContainer';
 import NumberContainer from '../shared/NumberContainer';
 import ReportContainer from '../shared/ReportContainer';
+import { auth } from '../../server/firebase';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
@@ -24,6 +26,20 @@ const Navbar = () => {
 
     const toggle = (show: boolean) => {
         setToggleSubMenu(show);
+    };
+
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            navigate('/login');
+            console.log('Logout successful');
+            // Perform any additional actions after logout if needed
+        } catch (error) {
+            // Logout failed
+            console.log('Logout failed', error);
+        }
     };
 
     return (
@@ -168,10 +184,13 @@ const Navbar = () => {
                         </Tab.List>
                         <div className="h-full flex" />
                         <button className="mx-4 my-12 rounded-2xl flex  items-end text-orange-500 bg-orange-100 hover:bg-orange-500 hover:text-white">
-                            <div className="flex pl-4 text-3xl h-20 items-center">
+                            <button
+                                onClick={handleLogout}
+                                className="flex pl-4 text-3xl h-20 items-center"
+                            >
                                 <ArrowRightOnRectangleIcon className="w-12 h-12 mr-4" />
                                 Đăng xuất
-                            </div>
+                            </button>
                         </button>
                     </div>
 
