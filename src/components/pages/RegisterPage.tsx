@@ -1,32 +1,57 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../server/firebase';
+import { auth, firestore } from '../../server/firebase';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
     const [error, setError] = useState('');
 
-    const handleRegister = async () => {
+    const navigate = useNavigate();
+
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         try {
-            await createUserWithEmailAndPassword(auth, username, password);
-            // Registration successful
-            console.log('Registration successful');
-        } catch (error: any) {
-            // Registration failed
-            setError(error.message);
-            console.log('Registration error:', error);
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                `${username.toLowerCase()}@fakeemail.com`,
+                password,
+            );
+            const user = userCredential.user;
+
+            if (user) {
+                console.log('Registration successful', user.uid);
+
+                // Lưu thông tin người dùng trong Firestore collection
+                const userDocRef = firestore.collection('users').doc(user.uid);
+                console.log('User information stored in Firestore');
+
+                // Thêm thông tin người dùng vào document
+                await userDocRef.set({
+                    username: username,
+                    password: password,
+                    // Thêm các trường thông tin khác của người dùng tại đây
+                });
+
+                navigate('/login'); // Chuyển hướng đến trang chính sau khi đăng ký thành công
+            } else {
+                console.log('User registration failed');
+            }
+        } catch (error) {
+            console.log('Registration failed', error);
         }
     };
+
     return (
         <div>
             <h2 className="text-2xl mb-4">Register</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className="flex items-center">
                 <div className="mr-2">
-                    <label htmlFor="username">Mật khẩu</label>
+                    <label htmlFor="username">Tên đăng nhập</label>
                     <input
                         type="text"
                         id="username"
@@ -36,7 +61,7 @@ const RegisterPage: React.FC = () => {
                     />
                 </div>
                 <div className="mr-2">
-                    <label htmlFor="password">:</label>
+                    <label htmlFor="password">Mật khẩu</label>
                     <div className="relative">
                         <input
                             type={showPassword ? 'text' : 'password'}
@@ -49,7 +74,9 @@ const RegisterPage: React.FC = () => {
                             type="button"
                             className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500"
                             onClick={() => setShowPassword(!showPassword)}
-                        ></button>
+                        >
+                            {showPassword ? 'Hide' : 'Show'}
+                        </button>
                     </div>
                 </div>
                 <button

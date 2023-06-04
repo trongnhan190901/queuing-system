@@ -7,6 +7,7 @@ const ResetPassword = () => {
     const [password2, setPassword2] = useState('');
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const [passwordMatch, setPasswordMatch] = useState(true);
 
     const handleTogglePassword1Visibility = () => {
         setShowPassword1(!showPassword1);
@@ -14,6 +15,16 @@ const ResetPassword = () => {
 
     const handleTogglePassword2Visibility = () => {
         setShowPassword2(!showPassword2);
+    };
+
+    const handleSubmit = () => {
+        if (password1 !== password2) {
+            setPasswordMatch(false);
+            return;
+        }
+
+        // Tiếp tục xử lý khi mật khẩu trùng khớp
+        // ...
     };
 
     return (
@@ -38,10 +49,13 @@ const ResetPassword = () => {
                                 <input
                                     type={showPassword1 ? 'text' : 'password'}
                                     value={password1}
-                                    className="w-[400px] z-0 relative h-[40px] border rounded-xl px-6"
-                                    onChange={(e) =>
-                                        setPassword1(e.target.value)
-                                    }
+                                    className={`w-[400px] z-0 relative h-[40px] border rounded-xl px-6 ${
+                                        !passwordMatch ? 'border-red-500' : ''
+                                    }`}
+                                    onChange={(e) => {
+                                        setPassword1(e.target.value);
+                                        setPasswordMatch(true);
+                                    }}
                                 />
                                 <div
                                     className="absolute top-16 right-2 transform -translate-y-1/2"
@@ -56,8 +70,13 @@ const ResetPassword = () => {
                             <input
                                 type={showPassword2 ? 'text' : 'password'}
                                 value={password2}
-                                className="w-[400px] z-0 relative h-[40px] border rounded-xl px-6"
-                                onChange={(e) => setPassword2(e.target.value)}
+                                className={`w-[400px] z-0 relative h-[40px] border rounded-xl px-6 ${
+                                    !passwordMatch ? 'border-red-500' : ''
+                                }`}
+                                onChange={(e) => {
+                                    setPassword2(e.target.value);
+                                    setPasswordMatch(true);
+                                }}
                             />
                             <div
                                 className="absolute top-16 right-2 transform -translate-y-1/2"
@@ -66,10 +85,18 @@ const ResetPassword = () => {
                                 <EyeSlashIcon className="w-9 h-9 mr-4" />
                             </div>
                         </div>
-                        <div className="w-full mt-12 justify-center flex">
+                        <div className="h-12 mt-6">
+                            {!passwordMatch && (
+                                <div className="text-red-500 mt-2">
+                                    Mật khẩu không trùng khớp
+                                </div>
+                            )}
+                        </div>
+                        <div className="w-full mt-6 justify-center flex">
                             <button
                                 type="submit"
                                 className="mt-6 w-[150px] rounded-xl h-[40px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border hover:border-orange-500 hover:text-orange-500"
+                                onClick={handleSubmit}
                             >
                                 Xác nhận
                             </button>

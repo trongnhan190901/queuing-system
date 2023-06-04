@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
-
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../../server/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const ForgotPassword = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const [backupEmail, setBackupEmail] = useState('');
+    const [emailExists, setEmailExists] = useState(true);
+    const [submitClicked, setSubmitClicked] = useState(false);
+    const [error, setError] = useState('');
+
+    const navigate = useNavigate();
+
+    const handleResetPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitClicked(true);
+
+        try {
+            await sendPasswordResetEmail(auth, backupEmail);
+
+            console.log('Reset password email sent');
+            navigate('/reset-password');
+
+            // Tiếp tục xử lý reset mật khẩu ở đây
+        } catch (error) {
+            setError('Email không tồn tại!');
+            setEmailExists(false);
+            console.log(error);
+        }
+    };
 
     return (
         <>
@@ -31,23 +53,40 @@ const ForgotPassword = () => {
                             </label>
                             <input
                                 type="text"
-                                value={username}
-                                className="w-[400px] focus:outline-none h-[40px] border rounded-xl px-6"
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={backupEmail}
+                                className={`w-[400px] mt-2 focus:outline-none h-[40px] border rounded-xl px-6 ${
+                                    emailExists ? '' : 'border-red-500'
+                                }`}
+                                onChange={(e) => {
+                                    setBackupEmail(e.target.value);
+                                    setEmailExists(true);
+                                    setError('');
+                                }}
                             />
+                            <div className="h-12 mt-6">
+                                {submitClicked && !emailExists && (
+                                    <div className="w-full flex-col mb-6 flex space-y-4">
+                                        <div className="text-2xl text-red-500 block">
+                                            {error ||
+                                                'Email không đúng hoặc không tồn tại'}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="w-full mt-12 justify-center flex space-x-6">
+                        <div className="w-full mt-4 justify-center flex space-x-6">
                             <Link to={'/login'}>
-                                <button className="mt-6 w-[150px] rounded-xl h-[40px] bg-white border border-orange-500 text-orange-500 hover: font-secondary font-bold hover:bg-orange-500 hover:text-white">
+                                <button className="mt-6 w-[150px] rounded-xl h-[40px] bg-white border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white">
                                     Hủy
                                 </button>
                             </Link>
 
-                            <Link to={'/resetpassword'}>
-                                <button className="mt-6 w-[150px] rounded-xl h-[40px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border hover:border-orange-500 hover:text-orange-500">
-                                    Tiếp tục
-                                </button>
-                            </Link>
+                            <button
+                                onClick={handleResetPassword}
+                                className="mt-6 w-[150px] rounded-xl h-[40px] border-orange-alta bg-orange-alta text-white font-secondary font-bold hover:bg-white border hover:border-orange-alta hover:text-orange-alta"
+                            >
+                                Tiếp tục
+                            </button>
                         </div>
                     </div>
                 </div>

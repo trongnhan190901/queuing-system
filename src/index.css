@@ -92,10 +92,6 @@ abbr {
     height: 50px !important;
 }
 
-.react-calendar__month-view__days__day--weekend {
-    color: #000 !important;
-}
-
 /* .react-calendar__month-view__days__day--weekend {
     color: #d10000;
    } */

@@ -32,9 +32,6 @@ const DeviceContainer = () => {
                     <div className="text-orange-500 text-3xl w-96 font-bold font-primary">
                         Danh sách thiết bị
                     </div>
-                    <div className="w-full flex justify-end">
-                        <User />
-                    </div>
                 </div>
 
                 <div className="m-12 my-12 text-4xl font-extrabold font-primary text-orange-500">

@@ -1,42 +1,72 @@
+import React, { useEffect, useState } from 'react';
+import { auth, firestore } from '../../server/firebase';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../partials/Navbar';
-import { AuthContext } from '../../context/authContext';
 import InformationModal from '../modal/InformationModal';
-import { useContext, useEffect } from 'react';
-import { auth } from '../../server/firebase';
 
 const MainPage = () => {
-    const user = auth.currentUser;
-    const { loggedIn, showInformationModal, setShowInformationModal } =
-        useContext(AuthContext);
+    const navigate = useNavigate();
+    const [showDialog, setShowDialog] = useState(false);
 
-    const handleOpenModal = () => {
-        setShowInformationModal(true);
+    useEffect(() => {
+        const checkUserLoggedIn = async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                navigate('/login');
+            } else {
+                // Kiểm tra nếu người dùng chưa cung cấp thông tin cá nhân
+                const userDocRef = firestore.collection('users').doc(user.uid);
+                const userDocSnap = await userDocRef.get();
+
+                if (
+                    !userDocSnap.exists ||
+                    !userDocSnap.data()?.fullName ||
+                    !userDocSnap.data()?.phone
+                ) {
+                    // Hiển thị dialog thông tin cá nhân
+                    setShowDialog(true);
+                }
+            }
+        };
+
+        checkUserLoggedIn();
+    }, [navigate]);
+
+    const checkUserInformation = async () => {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                const userDocRef = firestore.collection('users').doc(user.uid);
+                const userDocSnap = await userDocRef.get();
+
+                if (userDocSnap.exists) {
+                    const userData = userDocSnap.data();
+                    console.log('Thông tin người dùng:', userData);
+                } else {
+                    console.log('Người dùng không tồn tại trong Firestore.');
+                }
+            } catch (error) {
+                console.error('Lỗi khi truy xuất thông tin người dùng:', error);
+            }
+        } else {
+            console.log('Người dùng chưa đăng nhập.');
+        }
     };
 
-    const handleCloseModal = () => {
-        setShowInformationModal(false);
-    };
+    useEffect(() => {
+        checkUserInformation();
+    }, []);
 
-    console.log(user);
-
-    // useEffect(() => {
-    //     if (loggedIn && !showInformationModal) {
-    //         // Add your logic here to check if the user is missing information
-    //         const isMissingInformation = false; // Replace with your actual logic
-
-    //         if (isMissingInformation) {
-    //             setShowInformationModal(true);
-    //         }
-    //     }
-    // }, [loggedIn, showInformationModal, setShowInformationModal]);
     return (
         <>
             <div className="full-size flex">
                 <Navbar />
-                {/* {showInformationModal && (
-                    <InformationModal closeModal={handleCloseModal} />
-                )} */}
             </div>
+            <InformationModal
+                showDialog={showDialog}
+                setShowDialog={setShowDialog}
+            />
         </>
     );
 };

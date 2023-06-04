@@ -22,9 +22,6 @@ const ReportContainer = () => {
                     <div className="text-orange-500 text-3xl w-96 font-bold font-primary">
                         Lập báo cáo
                     </div>
-                    <div className="w-full flex justify-end">
-                        <User />
-                    </div>
                 </div>
 
                 <div className="flex my-12 mr-72">
