@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../../server/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { auth, firestore } from '../../server/firebase'; // Thay đổi import này nếu cần
 
 const ForgotPassword = () => {
     const [backupEmail, setBackupEmail] = useState('');
@@ -16,14 +16,24 @@ const ForgotPassword = () => {
         setSubmitClicked(true);
 
         try {
-            await sendPasswordResetEmail(auth, backupEmail);
+            const q = query(
+                collection(firestore, 'users'),
+                where('backupEmail', '==', backupEmail),
+            );
+            const userQuery = await getDocs(q);
 
-            console.log('Reset password email sent');
+            if (userQuery.empty) {
+                setError('Email không tồn tại');
+                setEmailExists(false);
+                return;
+            }
+
+            console.log('Email exists');
             navigate('/reset-password');
 
             // Tiếp tục xử lý reset mật khẩu ở đây
         } catch (error) {
-            setError('Email không tồn tại!');
+            setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
             setEmailExists(false);
             console.log(error);
         }

@@ -3,28 +3,36 @@ import { auth, firestore } from '../../server/firebase';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../partials/Navbar';
 import InformationModal from '../modal/InformationModal';
+import { getFirestore, collection, doc, getDoc } from 'firebase/firestore';
 
 const MainPage = () => {
     const navigate = useNavigate();
     const [showDialog, setShowDialog] = useState(false);
 
+    const user = auth.currentUser;
+
+    console.log(user);
+
     useEffect(() => {
         const checkUserLoggedIn = async () => {
             const user = auth.currentUser;
             if (!user) {
-                // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                // User is not logged in, redirect to the login page
                 navigate('/login');
             } else {
-                // Kiểm tra nếu người dùng chưa cung cấp thông tin cá nhân
-                const userDocRef = firestore.collection('users').doc(user.uid);
-                const userDocSnap = await userDocRef.get();
+                // Check if the user has provided personal information
+                const userDocRef = doc(
+                    collection(firestore, 'users'),
+                    user.uid,
+                );
+                const userDocSnap = await getDoc(userDocRef);
 
                 if (
-                    !userDocSnap.exists ||
+                    !userDocSnap.exists() ||
                     !userDocSnap.data()?.fullName ||
                     !userDocSnap.data()?.phone
                 ) {
-                    // Hiển thị dialog thông tin cá nhân
+                    // Show the personal information dialog
                     setShowDialog(true);
                 }
             }
@@ -37,20 +45,23 @@ const MainPage = () => {
         const user = auth.currentUser;
         if (user) {
             try {
-                const userDocRef = firestore.collection('users').doc(user.uid);
-                const userDocSnap = await userDocRef.get();
+                const userDocRef = doc(
+                    collection(firestore, 'users'),
+                    user.uid,
+                );
+                const userDocSnap = await getDoc(userDocRef);
 
-                if (userDocSnap.exists) {
+                if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
-                    console.log('Thông tin người dùng:', userData);
+                    console.log('User information:', userData);
                 } else {
-                    console.log('Người dùng không tồn tại trong Firestore.');
+                    console.log('User does not exist in Firestore.');
                 }
             } catch (error) {
-                console.error('Lỗi khi truy xuất thông tin người dùng:', error);
+                console.error('Error retrieving user information:', error);
             }
         } else {
-            console.log('Người dùng chưa đăng nhập.');
+            console.log('User is not logged in.');
         }
     };
 

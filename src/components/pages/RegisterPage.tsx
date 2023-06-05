@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, firestore } from '../../server/firebase';
 import { useNavigate } from 'react-router-dom';
+import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -26,14 +27,18 @@ const RegisterPage: React.FC = () => {
                 console.log('Registration successful', user.uid);
 
                 // Lưu thông tin người dùng trong Firestore collection
-                const userDocRef = firestore.collection('users').doc(user.uid);
+                const userDocRef = doc(
+                    collection(firestore, 'users'),
+                    user.uid,
+                );
                 console.log('User information stored in Firestore');
 
                 // Thêm thông tin người dùng vào document
-                await userDocRef.set({
+
+                await setDoc(userDocRef, {
                     username: username,
                     password: password,
-                    // Thêm các trường thông tin khác của người dùng tại đây
+                    // Add other user information fields here
                 });
 
                 navigate('/login'); // Chuyển hướng đến trang chính sau khi đăng ký thành công

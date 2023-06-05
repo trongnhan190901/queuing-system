@@ -2,6 +2,13 @@ import { BellIcon } from '@heroicons/react/24/outline';
 import { auth, firestore } from '../../server/firebase';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    onSnapshot,
+} from 'firebase/firestore';
 
 const User = () => {
     const user = auth.currentUser;
@@ -11,19 +18,24 @@ const User = () => {
         const fetchUserFullName = async () => {
             if (user) {
                 try {
-                    const userDocRef = firestore
-                        .collection('users')
-                        .doc(user.uid);
-                    const userDocSnap = await userDocRef.get();
+                    const userDocRef = doc(
+                        collection(firestore, 'users'),
+                        user.uid,
+                    );
 
-                    if (userDocSnap.exists) {
-                        const userData = userDocSnap.data();
-                        if (userData) {
-                            setFullName(userData.fullName || '');
+                    const unsubscribe = onSnapshot(userDocRef, (snapshot) => {
+                        if (snapshot.exists()) {
+                            const userData = snapshot.data();
+                            if (userData) {
+                                setFullName(userData.fullName || '');
+                            }
+                        } else {
+                            console.log('User document does not exist.');
                         }
-                    } else {
-                        console.log('User document does not exist.');
-                    }
+                    });
+
+                    // Hủy lắng nghe khi component bị unmount
+                    return () => unsubscribe();
                 } catch (error) {
                     console.error('Error fetching user information:', error);
                 }
@@ -46,7 +58,7 @@ const User = () => {
                     <div className="rounded-full hover:bg-orange-100 px-8 h-full absolute-center">
                         <div className="mr-4">
                             <img
-                                src="/logo.png"
+                                src="/image.jpeg"
                                 alt=""
                                 className="w-16 h-16 rounded-full"
                             />
