@@ -38,6 +38,7 @@ const RegisterPage: React.FC = () => {
                 await setDoc(userDocRef, {
                     username: username,
                     password: password,
+                    role: 'guest',
                     // Add other user information fields here
                 });
 

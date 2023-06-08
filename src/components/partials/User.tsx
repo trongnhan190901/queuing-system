@@ -55,7 +55,7 @@ const User = () => {
                     {/* <div className="w-[32px] h-[32px] bg-orange-500 rounded-full absolute-center">
                         <BellIcon className="h-8 w-8 stroke-white fill-white" />
                     </div> */}
-                    <div className="rounded-full hover:bg-orange-100 px-8 h-full absolute-center">
+                    <div className="rounded-full transition-colors duration-300 hover:bg-orange-100 px-8 h-full absolute-center">
                         <div className="mr-4">
                             <img
                                 src="/image.jpeg"

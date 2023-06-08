@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { auth, upload } from '../../server/firebase';
+import { auth } from '../../server/firebase';
 import { CameraIcon } from '@heroicons/react/24/outline';
 
 interface User {
@@ -54,11 +54,11 @@ const UserInfo = () => {
         }
     }
 
-    useEffect(() => {
-        if (photo) {
-            upload(photo, currentUser, setLoading);
-        }
-    }, [photo, currentUser]);
+    // useEffect(() => {
+    //     if (photo) {
+    //         upload(photo, currentUser, setLoading);
+    //     }
+    // }, [photo, currentUser]);
 
     if (!user) {
         return <div>Loading user information...</div>;

@@ -1,19 +1,21 @@
-import LoginPage from './components/pages/LoginPage';
-import RegisterPage from './components/pages/RegisterPage';
-import MainPage from './components/shared/MainPage';
-import ForgotPassword from './components/pages/ForgotPassword';
-import ResetPassword from './components/pages/ResetPassword';
+import React, { useState, useEffect } from 'react';
 import {
     BrowserRouter as Router,
     Route,
     Routes,
     Navigate,
 } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { auth } from './server/firebase';
+import LoginPage from './components/pages/LoginPage';
+import RegisterPage from './components/pages/RegisterPage';
+import MainPage from './components/shared/MainPage';
+import ForgotPassword from './components/pages/ForgotPassword';
+import ResetPassword from './components/pages/ResetPassword';
 import UserInfo from './components/pages/UserInfo';
+import AddDevice from './components/shared/device/AddDevice';
+import { Toaster } from 'react-hot-toast';
 
-const App = () => {
+const AppContent = () => {
     const PrivateRoute = ({ path, element }: any) => {
         const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -26,7 +28,7 @@ const App = () => {
         }, []);
 
         return isLoggedIn ? (
-            <Route path="/" element={<MainPage />} />
+            <Route path={path} element={element} />
         ) : (
             <Navigate to="/login" replace />
         );
@@ -34,29 +36,29 @@ const App = () => {
 
     return (
         <div className="full-size flex">
-            <div className="full-size flex">
-                <Router>
-                    <Routes>
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/" element={<MainPage />} />
-                        <Route
-                            path="/reset-password"
-                            element={<ResetPassword />}
-                        />
-                        <Route
-                            path="/forgot-password"
-                            element={<ForgotPassword />}
-                        />
-                        <Route path="/user" element={<UserInfo />} />
+            <Toaster position="top-center" reverseOrder={false} />
+            <Routes>
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/" element={<MainPage />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/user" element={<UserInfo />} />
+                <Route path="/add-device" element={<AddDevice />} />
 
-                        <Route element={<PrivateRoute />}>
-                            <Route path="/" element={<MainPage />} />
-                        </Route>
-                    </Routes>
-                </Router>
-            </div>
+                <Route
+                    element={<PrivateRoute path="/" element={<MainPage />} />}
+                />
+            </Routes>
         </div>
+    );
+};
+
+const App = () => {
+    return (
+        <Router>
+            <AppContent />
+        </Router>
     );
 };
 

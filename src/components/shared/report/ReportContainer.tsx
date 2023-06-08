@@ -4,7 +4,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { useState, Fragment } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { FolderArrowDownIcon } from '@heroicons/react/24/solid';
-import User from '../partials/User';
+import User from '../../partials/User';
 
 const ReportContainer = () => {
     const options = ['Tất cả', 'Hoạt động', 'Ngưng hoạt động'];

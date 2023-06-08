@@ -7,7 +7,7 @@ import {
     MagnifyingGlassIcon,
     PlusIcon,
 } from '@heroicons/react/24/outline';
-import User from '../partials/User';
+import User from '../../partials/User';
 
 const NumberContainer = () => {
     const options = ['Tất cả', 'Hoạt động', 'Ngưng hoạt động'];

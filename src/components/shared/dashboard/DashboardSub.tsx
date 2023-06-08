@@ -1,4 +1,3 @@
-import User from '../partials/User';
 import DashboardCalendar from './DashboardCalendar';
 import DashboardDoughnut from './DashboardDoughnut';
 

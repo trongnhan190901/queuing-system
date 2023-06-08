@@ -18,18 +18,18 @@ const app = initializeApp(config);
 export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 
-const storage = getStorage();
+// const storage = getStorage();
 
-export async function upload(file: any, currentUser: any, setLoading: any) {
-    const storageRef = ref(storage, currentUser.uid + '.png');
+// export async function upload(file: any, currentUser: any, setLoading: any) {
+//     const storageRef = ref(storage, currentUser.uid + '.png');
 
-    setLoading(true);
+//     setLoading(true);
 
-    const snapshot = await uploadBytes(storageRef, file);
-    const photoURL = await getDownloadURL(storageRef);
+//     const snapshot = await uploadBytes(storageRef, file);
+//     const photoURL = await getDownloadURL(storageRef);
 
-    updateProfile(currentUser, { photoURL });
+//     updateProfile(currentUser, { photoURL });
 
-    setLoading(false);
-    alert('Uploaded file!');
-}
+//     setLoading(false);
+//     alert('Uploaded file!');
+// }
