@@ -154,10 +154,13 @@ const DeviceContainer = () => {
             }
             // Lọc dựa trên thuộc tính của device mà bạn muốn tìm kiếm, ví dụ: device.deviceCode, device.deviceName, ...
             return (
+                device.deviceCode.toLowerCase().includes(searchTerm) ||
+                device.deviceName.toLowerCase().includes(searchTerm) ||
+                device.serviceUse.toLowerCase().includes(searchTerm) ||
+                device.ipAddress.includes(searchTerm) ||
                 device.deviceCode.includes(searchTerm) ||
                 device.deviceName.includes(searchTerm) ||
-                device.ipAddress.includes(searchTerm) ||
-                device.serviceUse.toLowerCase().includes(searchTerm)
+                device.serviceUse.includes(searchTerm)
             );
         })
         .slice(pagesVisited, pagesVisited + devicesPerPage)
