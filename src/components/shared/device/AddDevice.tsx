@@ -347,7 +347,7 @@ const AddDevice = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="flex items-center text-[16px] mt-4 space-x-1">
+                                <div className="flex items-center text-[15px] mt-4 space-x-1">
                                     <span className="text-red-500 font-bold mt-3 text-3xl">
                                         *{' '}
                                     </span>

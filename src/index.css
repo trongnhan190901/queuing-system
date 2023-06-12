@@ -214,3 +214,17 @@ abbr {
     padding: 4px;
     border-radius: 50%;
 }
+
+.checkbox-blue {
+    --checkbox-color: #3b82f6 !important; /* Màu sắc của khung checkbox */
+}
+
+.checkbox-blue input[type='checkbox'] {
+    border-color: var(--checkbox-color); /* Đặt màu sắc cho khung checkbox */
+}
+
+.checkbox-blue input[type='checkbox']:checked {
+    border-color: var(
+        --checkbox-color
+    ); /* Đặt màu sắc cho khung checkbox khi được chọn */
+}

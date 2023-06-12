@@ -18,6 +18,7 @@ import ServiceContainer from '../shared/service/ServiceContainer';
 import DashboardContainer from '../shared/dashboard/DashboardContainer';
 import User from './User';
 import UserInfo from '../pages/UserInfo';
+import RoleContainer from '../shared/system/role/RoleContainer';
 
 const Navbar = () => {
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
@@ -123,11 +124,12 @@ const Navbar = () => {
                         </div>
                         <div
                             className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 5
+                                selectedIndex === 6 ||
+                                selectedIndex === 7 ||
+                                selectedIndex === 8
                                     ? 'bg-orange-alta text-white focus:outline-none'
                                     : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
                             }`}
-                            onClick={() => handleTabChange(5)}
                         >
                             <div className="full-size pl-8 flex items-center">
                                 <Cog6ToothIcon className="w-12 h-12 mr-4" />
@@ -144,13 +146,40 @@ const Navbar = () => {
                                 <div className="w-[220px] absolute bg-white top-0 left-full rounded-tr-2xl ">
                                     {toggleSubMenu && (
                                         <ul>
-                                            <li className="flex hover:bg-orange-400 pl-8 rounded-tr-3xl hover:text-white text-3xl h-20 items-center text-gray-600">
+                                            <li
+                                                onClick={() =>
+                                                    handleTabChange(6)
+                                                }
+                                                className={`flex outline-0 text-3xl h-20  pl-8 rounded-tr-3xl items-center ${
+                                                    selectedIndex === 6
+                                                        ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                                        : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
+                                                }`}
+                                            >
                                                 Quản lý vài trò
                                             </li>
-                                            <li className="flex text-3xl hover:bg-orange-400 pl-8 hover:text-white h-20 items-center text-gray-600">
+                                            <li
+                                                onClick={() =>
+                                                    handleTabChange(7)
+                                                }
+                                                className={`flex outline-0 text-3xl h-20  pl-8 items-center ${
+                                                    selectedIndex === 7
+                                                        ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                                        : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
+                                                }`}
+                                            >
                                                 Quản lý tài khoản
                                             </li>
-                                            <li className="flex text-3xl hover:bg-orange-400 pl-8 rounded-br-3xl hover:text-white h-20 items-center text-gray-600">
+                                            <li
+                                                onClick={() =>
+                                                    handleTabChange(8)
+                                                }
+                                                className={`flex outline-0 text-3xl h-20  pl-8 rounded-br-3xl items-center ${
+                                                    selectedIndex === 8
+                                                        ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                                        : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
+                                                }`}
+                                            >
                                                 Nhật ký người dùng
                                             </li>
                                         </ul>
@@ -159,19 +188,10 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-
-                    <button className="mx-4 my-12 rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white">
-                        <button
-                            onClick={handleLogout}
-                            className="flex pl-4 text-3xl h-20 items-center"
-                        >
-                            <ArrowUpTrayIcon className="w-12 stroke-2 rotate-90 h-12 mr-4" />
-                            Đăng xuất
-                        </button>
-                    </button>
                 </div>
+
                 <div
-                    onClick={() => handleTabChange(6)}
+                    onClick={() => handleTabChange(5)}
                     className="absolute right-2 top-2"
                 >
                     <User />
@@ -183,9 +203,20 @@ const Navbar = () => {
                     {selectedIndex === 2 && <ServiceContainer />}
                     {selectedIndex === 3 && <NumberContainer />}
                     {selectedIndex === 4 && <ReportContainer />}
-                    {/* {selectedIndex === 5 && <SystemSettings />} */}
-                    {selectedIndex === 6 && <UserInfo />}
+                    {selectedIndex === 5 && <UserInfo />}
+                    {selectedIndex === 6 && <RoleContainer />}
+                    {/* {selectedIndex === 6 && <RoleContainer />} */}
+                    {/* {selectedIndex === 6 && <RoleContainer />} */}
                 </div>
+            </div>
+            <div className="mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white">
+                <button
+                    onClick={handleLogout}
+                    className="flex pl-4 text-3xl h-20 items-center"
+                >
+                    <ArrowUpTrayIcon className="w-12 stroke-2 rotate-90 h-12 mr-4" />
+                    Đăng xuất
+                </button>
             </div>
         </>
     );
