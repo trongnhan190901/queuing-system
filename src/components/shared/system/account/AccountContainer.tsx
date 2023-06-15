@@ -162,20 +162,20 @@ const AccountContainer = () => {
                             >
                                 {account.username}
                             </th>
-                            <th className='border border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                            <th className='border border-orange-200 w-[250px] px-6 font-thin text-start '>
                                 {account.fullName}
                             </th>
 
-                            <th className='border border-orange-200 w-[180px] pl-6 pr-16 font-thin text-start '>
+                            <th className='border border-orange-200 w-[150px] px-6 font-thin text-start '>
                                 {account.phone}
                             </th>
-                            <th className='border  border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                            <th className='border  border-orange-200 w-[250px] px-6 font-thin text-start '>
                                 {account.email}
                             </th>
-                            <th className='border  border-orange-200 w-[150px] pl-6 pr-16 font-thin text-start '>
+                            <th className='border  border-orange-200 w-[150px] px-6 font-thin text-start '>
                                 {account.role}
                             </th>
-                            <th className='border  border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                            <th className='border  border-orange-200 w-[250px] px-6 font-thin text-start '>
                                 {account.active ? (
                                     <div className='flex'>
                                         <div className='w-3 h-3 mt-3 mr-3 rounded-full bg-green-500'></div>
@@ -192,7 +192,7 @@ const AccountContainer = () => {
                                 onClick={() =>
                                     showUpdateAccountComponent(account.id)
                                 }
-                                className={`w-[112px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start  ${roundedRight}`}
+                                className={`w-[108px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start  ${roundedRight}`}
                             >
                                 Cập nhật
                             </th>
@@ -351,19 +351,19 @@ const AccountContainer = () => {
                                         <th className='border w-[250px] px-6 font-bold text-start'>
                                             Họ tên
                                         </th>
-                                        <th className='border w-[180px] pl-6 pr-16 font-bold text-start'>
+                                        <th className='border w-[150px] px-6 font-bold text-start'>
                                             Số điện thoại
                                         </th>
-                                        <th className='border w-[250px] pl-6 pr-16 font-bold text-start'>
+                                        <th className='border w-[250px] px-6 font-bold text-start'>
                                             Email
                                         </th>
-                                        <th className='border w-[150px] pl-6 pr-16 font-bold text-start'>
+                                        <th className='border w-[150px] px-6 font-bold text-start'>
                                             Vai trò
                                         </th>
-                                        <th className='border w-[250px] pl-6 pr-16 font-bold text-start'>
+                                        <th className='border w-[250px] px-6 font-bold text-start'>
                                             Trạng thái hoạt động
                                         </th>
-                                        <th className='border px-6 w-[112px] font-bold text-start rounded-tr-3xl'></th>
+                                        <th className='border px-6 w-[108px] font-bold text-start rounded-tr-3xl'></th>
                                     </tr>
                                     </thead>
                                     <tbody>{displayAccounts}</tbody>
