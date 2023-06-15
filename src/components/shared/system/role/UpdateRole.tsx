@@ -1,21 +1,11 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
-import { firestore } from '../../../../server/firebase';
-import { updateDoc, doc } from 'firebase/firestore';
+import { firestore } from 'server/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import RoleContainer from './RoleContainer';
-
-interface Role {
-    id: string;
-    roleName: string;
-    roleDes: string;
-    featAX: boolean;
-    featAY: boolean;
-    featAZ: boolean;
-    featBX: boolean;
-    featBY: boolean;
-    featBZ: boolean;
-}
+import { Role } from 'types';
+import Loading from 'components/loading/Loading';
 
 interface UpdateRoleProp {
     roleData: Role | null;
@@ -23,14 +13,13 @@ interface UpdateRoleProp {
 }
 
 const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
-    console.log(roleData);
-
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [roleName, setRoleName] = useState(roleData?.roleName);
     const [roleDes, setRoleDes] = useState(roleData?.roleDes);
 
     const [showUpdateRole, setShowUpdateRole] = useState(true);
     const [showContainer, setShowContainer] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const showUpdateRoleContainer = () => {
         setShowContainer(!showContainer);
@@ -107,9 +96,11 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
 
     const handleFormSubmit = async () => {
         setIsSubmitted(true);
+        setIsLoading(true);
 
         if (roleName && roleDes && roleId) {
             try {
+                setIsLoading(false);
                 const roleRef = doc(firestore, 'roles', roleId);
 
                 await updateDoc(roleRef, {
@@ -124,56 +115,61 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                 });
 
                 toast.success('Cập nhật vai trò thành công');
+                showUpdateRoleContainer();
                 console.log('Document written with ID: ', roleId);
             } catch (error) {
+                setIsLoading(false);
                 toast.error('Cập nhật vai trò thất bại');
                 console.error('Error adding document: ', error);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
 
     return (
         <>
+            {isLoading && <Loading />}
             {showUpdateRole && (
                 <>
-                    <div className="h-32 mx-12 flex items-center">
-                        <div className="text-gray-500 text-3xl font-bold font-primary">
+                    <div className='h-32 mx-12 flex items-center'>
+                        <div className='text-gray-500 text-3xl font-bold font-primary'>
                             Cài đặt hệ thống
                         </div>
-                        <ChevronRightIcon className="h-8 w-8 mx-6 stroke-gray-500" />
+                        <ChevronRightIcon className='h-8 w-8 mx-6 stroke-gray-500' />
                         <div
                             onClick={showUpdateRoleContainer}
-                            className="text-gray-500 cursor-pointer hover:text-orange-alta text-3xl font-bold font-primary"
+                            className='text-gray-500 cursor-pointer hover:text-orange-alta text-3xl font-bold font-primary'
                         >
                             Quản lý vai trò
                         </div>
-                        <ChevronRightIcon className="h-8 w-8 mx-6 stroke-gray-500" />
-                        <div className="text-orange-alta text-3xl font-bold font-primary">
+                        <ChevronRightIcon className='h-8 w-8 mx-6 stroke-gray-500' />
+                        <div className='text-orange-alta text-3xl font-bold font-primary'>
                             Cập nhật vai trò
                         </div>
                     </div>
-                    <div className="m-12 my-12 text-4xl font-extrabold font-primary text-orange-alta">
+                    <div className='m-12 my-12 text-4xl font-extrabold font-primary text-orange-alta'>
                         Danh sách vai trò
                     </div>
-                    <div className="w-[95%] ml-14 h-[600px] pb-96 rounded-3xl drop-shadow-xl shadow-xl bg-white">
-                        <div className="mx-14 pt-8 pb-24">
-                            <div className="text-orange-alta text-[22px] font-bold font-primary">
+                    <div className='w-[95%] ml-14 h-[600px] pb-96 rounded-3xl drop-shadow-xl shadow-xl bg-white'>
+                        <div className='mx-14 pt-8 pb-24'>
+                            <div className='text-orange-alta text-[22px] font-bold font-primary'>
                                 Thông tin dịch vụ
                             </div>
-                            <div className="mt-12 full-size">
-                                <div className="flex space-x-8">
-                                    <div className="flex w-full text-[16px] flex-col space-y-6">
-                                        <div className="flex font-primary flex-col space-y-2">
-                                            <label className="flex font-bold items-center space-x-2">
+                            <div className='mt-12 full-size'>
+                                <div className='flex space-x-8'>
+                                    <div className='flex w-full text-[16px] flex-col space-y-6'>
+                                        <div className='flex font-primary flex-col space-y-2'>
+                                            <label className='flex font-bold items-center space-x-2'>
                                                 <span>Tên vai trò:</span>
-                                                <span className="text-red-500 mt-3 text-3xl">
+                                                <span className='text-red-500 mt-3 text-3xl'>
                                                     {' '}
                                                     *
                                                 </span>
                                             </label>
                                             <input
-                                                placeholder="Nhập tên vai trò"
-                                                type="text"
+                                                placeholder='Nhập tên vai trò'
+                                                type='text'
                                                 className={`w-[96%] focus:outline-none h-[40px] border rounded-xl px-6 ${
                                                     isSubmitted && !roleName
                                                         ? 'border-red-500'
@@ -185,16 +181,16 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                 }
                                             />
                                         </div>
-                                        <div className="flex font-primary flex-col space-y-2">
-                                            <label className="flex font-bold items-center space-x-2">
+                                        <div className='flex font-primary flex-col space-y-2'>
+                                            <label className='flex font-bold items-center space-x-2'>
                                                 <span>Mô tả:</span>
-                                                <span className="text-red-500 mt-3 text-3xl">
+                                                <span className='text-red-500 mt-3 text-3xl'>
                                                     {' '}
                                                     *
                                                 </span>
                                             </label>
                                             <textarea
-                                                placeholder="Nhập mô tả"
+                                                placeholder='Nhập mô tả'
                                                 rows={4}
                                                 className={`w-[96%] focus:outline-none h-[130px] border-gray-300 border rounded-xl py-2 px-6 ${
                                                     isSubmitted && !roleDes
@@ -207,8 +203,8 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                 }
                                             />
                                         </div>
-                                        <div className="flex items-center text-[15px] mt-4 space-x-1">
-                                            <span className="text-red-500 font-bold mt-3 text-3xl">
+                                        <div className='flex items-center text-[15px] mt-4 space-x-1'>
+                                            <span className='text-red-500 font-bold mt-3 text-3xl'>
                                                 *{' '}
                                             </span>
                                             <span>
@@ -216,24 +212,24 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="flex w-full text-[16px] flex-col space-y-6">
-                                        <div className="flex font-primary flex-col space-y-2">
-                                            <label className="flex font-bold items-center space-x-2">
+                                    <div className='flex w-full text-[16px] flex-col space-y-6'>
+                                        <div className='flex font-primary flex-col space-y-2'>
+                                            <label className='flex font-bold items-center space-x-2'>
                                                 <span>
                                                     Phân quyền chức năng:
                                                 </span>
                                             </label>
-                                            <div className="bg-orange-100 rounded-3xl mr-12 w-full h-[450px]">
-                                                <div className="my-8 mx-12">
-                                                    <div className="text-orange-alta text-[22px] font-bold font-primary">
+                                            <div className='bg-orange-100 rounded-3xl mr-12 w-full h-[450px]'>
+                                                <div className='my-8 mx-12'>
+                                                    <div className='text-orange-alta text-[22px] font-bold font-primary'>
                                                         Nhóm chức năng A
                                                     </div>
-                                                    <div className="my-4">
+                                                    <div className='my-4'>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         allFeatA
                                                                     }
@@ -241,16 +237,17 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         handleSelectAllChangeFeatA
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Tất cả
                                                                 </div>
-                                                            </div>{' '}
+                                                            </div>
+                                                            {' '}
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featAX
                                                                     }
@@ -265,16 +262,16 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng x
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featAY
                                                                     }
@@ -289,16 +286,16 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng y
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featAZ
                                                                     }
@@ -313,21 +310,21 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng z
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="text-orange-alta text-[22px] font-bold font-primary">
+                                                    <div className='text-orange-alta text-[22px] font-bold font-primary'>
                                                         Nhóm chức năng B
                                                     </div>
-                                                    <div className="my-4">
+                                                    <div className='my-4'>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         allFeatB
                                                                     }
@@ -335,16 +332,17 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         handleSelectAllChangeFeatB
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Tất cả
                                                                 </div>
-                                                            </div>{' '}
+                                                            </div>
+                                                            {' '}
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featBX
                                                                     }
@@ -359,16 +357,16 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng x
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featBY
                                                                     }
@@ -383,16 +381,16 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng y
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="flex text-[16px] h-16 items-center">
+                                                            <div className='flex text-[16px] h-16 items-center'>
                                                                 <input
-                                                                    type="checkbox"
-                                                                    className="appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500"
+                                                                    type='checkbox'
+                                                                    className='appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500'
                                                                     checked={
                                                                         featBZ
                                                                     }
@@ -407,7 +405,7 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <div className="mx-4">
+                                                                <div className='mx-4'>
                                                                     Chức năng z
                                                                 </div>
                                                             </div>
@@ -421,18 +419,18 @@ const UpdateRole = ({ roleData, roleId }: UpdateRoleProp) => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full mt-12 text-2xl justify-center flex space-x-6">
+                    <div className='w-full mt-12 text-2xl justify-center flex space-x-6'>
                         <button
                             onClick={showUpdateRoleContainer}
-                            className="mt-6 w-[150px] rounded-xl h-[45px] bg-orange-100 border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white"
+                            className='mt-6 w-[150px] rounded-xl h-[45px] bg-orange-100 border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white'
                         >
                             Hủy bỏ
                         </button>
 
                         <button
                             onClick={handleFormSubmit}
-                            type="submit"
-                            className="mt-6 w-[150px] rounded-xl h-[45px] border-orange-alta bg-orange-alta text-white font-secondary font-bold hover:bg-orange-100 border hover:border-orange-alta hover:text-orange-alta"
+                            type='submit'
+                            className='mt-6 w-[150px] rounded-xl h-[45px] border-orange-alta bg-orange-alta text-white font-secondary font-bold hover:bg-orange-100 border hover:border-orange-alta hover:text-orange-alta'
                         >
                             Cập nhật
                         </button>

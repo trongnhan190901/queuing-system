@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { EyeSlashIcon } from '@heroicons/react/24/outline';
-import { auth } from '~/server/firebase';
 
 const ResetPassword = () => {
     const [password1, setPassword1] = useState('');
@@ -29,22 +28,22 @@ const ResetPassword = () => {
 
     return (
         <>
-            <div className="flex full-size">
-                <div className="w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col">
+            <div className='flex full-size'>
+                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
                     <img
-                        className="w-[250px] my-12 h-fit"
-                        src="/logo.png"
-                        alt=""
+                        className='w-[250px] my-12 h-fit'
+                        src='/logo.png'
+                        alt=''
                     />
 
-                    <div className="text-2xl font-secondary">
-                        <div className="flex flex-col space-y-3">
-                            <div className="w-full flex-col mb-6 absolute-center space-y-4">
-                                <div className="font-bold text-4xl">
+                    <div className='text-2xl font-secondary'>
+                        <div className='flex flex-col space-y-3'>
+                            <div className='w-full flex-col mb-6 absolute-center space-y-4'>
+                                <div className='font-bold text-4xl'>
                                     Đặt mật khẩu mới
                                 </div>
                             </div>
-                            <div className="flex relative flex-col space-y-3 mt-6">
+                            <div className='flex relative flex-col space-y-3 mt-6'>
                                 <label>Mật khẩu</label>
                                 <input
                                     type={showPassword1 ? 'text' : 'password'}
@@ -58,14 +57,14 @@ const ResetPassword = () => {
                                     }}
                                 />
                                 <div
-                                    className="absolute top-16 right-2 transform -translate-y-1/2"
+                                    className='absolute top-16 right-2 transform -translate-y-1/2'
                                     onClick={handleTogglePassword1Visibility}
                                 >
-                                    <EyeSlashIcon className="w-9 h-9 mr-4" />
+                                    <EyeSlashIcon className='w-9 h-9 mr-4' />
                                 </div>
                             </div>
                         </div>
-                        <div className="flex relative flex-col space-y-3 mt-6">
+                        <div className='flex relative flex-col space-y-3 mt-6'>
                             <label>Xác nhận mật khẩu</label>
                             <input
                                 type={showPassword2 ? 'text' : 'password'}
@@ -79,23 +78,23 @@ const ResetPassword = () => {
                                 }}
                             />
                             <div
-                                className="absolute top-16 right-2 transform -translate-y-1/2"
+                                className='absolute top-16 right-2 transform -translate-y-1/2'
                                 onClick={handleTogglePassword2Visibility}
                             >
-                                <EyeSlashIcon className="w-9 h-9 mr-4" />
+                                <EyeSlashIcon className='w-9 h-9 mr-4' />
                             </div>
                         </div>
-                        <div className="h-12 mt-6">
+                        <div className='h-12 mt-6'>
                             {!passwordMatch && (
-                                <div className="text-red-500 mt-2">
+                                <div className='text-red-500 mt-2'>
                                     Mật khẩu không trùng khớp
                                 </div>
                             )}
                         </div>
-                        <div className="w-full mt-6 justify-center flex">
+                        <div className='w-full mt-6 justify-center flex'>
                             <button
-                                type="submit"
-                                className="mt-6 w-[150px] rounded-xl h-[40px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border hover:border-orange-500 hover:text-orange-500"
+                                type='submit'
+                                className='mt-6 w-[150px] rounded-xl h-[40px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border hover:border-orange-500 hover:text-orange-500'
                                 onClick={handleSubmit}
                             >
                                 Xác nhận

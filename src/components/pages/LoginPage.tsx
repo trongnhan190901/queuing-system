@@ -1,34 +1,47 @@
 import React, { useState } from 'react';
-import { auth } from '../../server/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Link } from 'react-router-dom';
-import { EyeSlashIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../../store/authSlice';
+import { RootState } from 'store/store';
+import Loading from 'components/loading/Loading';
+import { ExclamationCircleIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const dispatch = useDispatch();
+    const isLoading = useSelector((state: RootState) => state.auth.loading);
 
     const navigate = useNavigate();
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Generate a fake email based on the username
-        const email = `${username.toLowerCase()}@fakeemail.com`;
-
+    const handleLogin = async (event: any) => {
+        event.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            navigate('/');
-            console.log('Login successful');
-        } catch (error: any) {
-            // Login failed
-            setError('Tên đăng nhập hoặc mật khẩu không đúng');
-            console.log('Login error:', error);
+            const resultAction = await dispatch(login({ username, password }) as any);
+            if (resultAction.payload) {
+                // Đăng nhập thành công
+                const user = resultAction.payload;
+                console.log(user);
+
+                // Kiểm tra trạng thái active của người dùng
+                if (!user.active) {
+                    // Người dùng không hoạt động, hiển thị thông báo hoặc xử lý tương ứng
+                    setError('Tài khoản của bạn đã bị vô hiệu hóa');
+                    return;
+                }
+
+                navigate('/');
+            } else {
+                // Đăng nhập thất bại
+                setError('Sai mật khẩu hoặc tên đăng nhập');
+            }
+        } catch (error) {
+            console.error('Lỗi đăng nhập:', error);
         }
     };
+
 
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -36,22 +49,25 @@ const LoginPage = () => {
 
     return (
         <>
-            <div className="flex full-size">
-                <div className="w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col">
+            <div className='flex full-size'>
+                {isLoading &&
+                    <Loading />
+                };
+                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
                     <img
-                        className="w-[250px] my-12 h-fit"
-                        src="/logo.png"
-                        alt=""
+                        className='w-[250px] my-12 h-fit'
+                        src='/logo.png'
+                        alt=''
                     />
 
                     <form
                         onSubmit={handleLogin}
-                        className="text-2xl font-secondary"
+                        className='text-2xl font-secondary'
                     >
-                        <div className="flex flex-col space-y-3">
+                        <div className='flex flex-col space-y-3'>
                             <label>Tên đăng nhập *</label>
                             <input
-                                type="text"
+                                type='text'
                                 value={username}
                                 className={`w-[400px] h-[40px] border rounded-xl px-6 ${
                                     error ? 'border-red-500' : ''
@@ -59,7 +75,7 @@ const LoginPage = () => {
                                 onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
-                        <div className="flex relative flex-col space-y-3 mt-6">
+                        <div className='flex relative flex-col space-y-3 mt-6'>
                             <label>Mật khẩu *</label>
                             <input
                                 type={showPassword ? 'text' : 'password'}
@@ -70,37 +86,38 @@ const LoginPage = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <div
-                                className="absolute top-16 right-2 transform -translate-y-1/2"
+                                className='absolute top-16 right-2 transform -translate-y-1/2'
                                 onClick={handleTogglePasswordVisibility}
                             >
                                 {!showPassword ? (
-                                    <EyeSlashIcon className="w-9 h-9 mr-4 stroke-2" />
+                                    <EyeSlashIcon className='w-9 h-9 mr-4 stroke-2' />
                                 ) : (
-                                    <EyeIcon className="w-9 h-9 mr-4 stroke-2" />
+                                    <EyeIcon className='w-9 h-9 mr-4 stroke-2' />
                                 )}
                             </div>
                         </div>
-                        <div className="mt-6 h-24">
-                            <Link
-                                to={'/forgot-password'}
-                                className="text-orange-500 hover:underline underline-offset-2 cursor-pointer"
-                            >
-                                Quên mật khẩu
-                            </Link>
+                        <div className='mt-4 h-12'>
                             {error && (
-                                <div className="text-red-500 mt-4">{error}</div>
+                                <div className='flex items-center text-red-500 mt-4'>
+                                    <ExclamationCircleIcon className='w-10 h-10 stroke-[2.5] mr-2' />
+                                    <span>{error}</span>
+                                </div>
                             )}
                         </div>
-                        <div className="w-full justify-center flex">
+                        <div className='w-full absolute-center flex-col'>
                             <button
                                 onClick={handleLogin}
-                                type="submit"
-                                className={`mt-6 w-[150px] rounded-xl h-[40px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border hover:border-orange-500 hover:text-orange-500 ${
-                                    error ? 'border-red-500' : ''
-                                }`}
+                                type='submit'
+                                className='mt-6 w-[150px] rounded-xl h-[45px] bg-orange-500 text-white font-secondary font-bold hover:bg-white border-orange-alta hover:border-orange-500 hover:border-2 hover:text-orange-500'
                             >
                                 Đăng nhập
                             </button>
+                            <Link
+                                to={'/forgot-password'}
+                                className='text-red-500 mt-4 hover:underline underline-offset-2 cursor-pointer'
+                            >
+                                Quên mật khẩu
+                            </Link>
                         </div>
                     </form>
                 </div>

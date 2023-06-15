@@ -1,16 +1,15 @@
 import {
-    Squares2X2Icon,
-    ComputerDesktopIcon,
-    ChatBubbleLeftRightIcon,
-    Square3Stack3DIcon,
-    DocumentChartBarIcon,
-    Cog6ToothIcon,
-    EllipsisVerticalIcon,
     ArrowUpTrayIcon,
+    ChatBubbleLeftRightIcon,
+    Cog6ToothIcon,
+    ComputerDesktopIcon,
+    DocumentChartBarIcon,
+    EllipsisVerticalIcon,
+    Square3Stack3DIcon,
+    Squares2X2Icon,
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../server/firebase';
 import DeviceContainer from '../shared/device/DeviceContainer';
 import NumberContainer from '../shared/number/NumberContainer';
 import ReportContainer from '../shared/report/ReportContainer';
@@ -19,10 +18,14 @@ import DashboardContainer from '../shared/dashboard/DashboardContainer';
 import User from './User';
 import UserInfo from '../pages/UserInfo';
 import RoleContainer from '../shared/system/role/RoleContainer';
+import AccountContainer from '../shared/system/account/AccountContainer';
+import { useDispatch } from 'react-redux';
+import { logout } from 'store/authSlice';
 
 const Navbar = () => {
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
+
 
     const toggle = (show: boolean) => {
         setToggleSubMenu(show);
@@ -30,12 +33,12 @@ const Navbar = () => {
 
     const navigate = useNavigate();
 
+    const dispatch = useDispatch();
+
     const handleLogout = async () => {
         try {
-            await auth.signOut();
-            localStorage.removeItem('authToken');
+            dispatch(logout());
             navigate('/login');
-            console.log('Logout successful');
         } catch (error) {
             console.log('Logout failed', error);
         }
@@ -47,16 +50,16 @@ const Navbar = () => {
 
     return (
         <>
-            <div className="relative full-size flex z-20">
-                <div className="w-[240px] h-full font-medium font-primary flex flex-col">
-                    <div className="flex justify-center w-full">
+            <div className='relative full-size flex z-20'>
+                <div className='w-[240px] h-full font-medium font-primary flex flex-col'>
+                    <div className='flex justify-center w-full'>
                         <img
-                            className="w-[150px] my-12 h-fit"
-                            src="/logo.png"
-                            alt=""
+                            className='w-[150px] my-12 h-fit'
+                            src='/logo.png'
+                            alt=''
                         />
                     </div>
-                    <div className="flex w-[240px] flex-col space-y-4">
+                    <div className='flex w-[240px] flex-col space-y-4'>
                         <div
                             className={`flex outline-0 text-3xl h-20 items-center ${
                                 selectedIndex === 0
@@ -65,8 +68,8 @@ const Navbar = () => {
                             }`}
                             onClick={() => handleTabChange(0)}
                         >
-                            <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
-                                <Squares2X2Icon className="w-12 h-12 mr-4" />
+                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                                <Squares2X2Icon className='w-12 h-12 mr-4' />
                                 Dashboard
                             </div>
                         </div>
@@ -78,8 +81,8 @@ const Navbar = () => {
                             }`}
                             onClick={() => handleTabChange(1)}
                         >
-                            <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
-                                <ComputerDesktopIcon className="w-12 h-12 mr-4" />
+                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                                <ComputerDesktopIcon className='w-12 h-12 mr-4' />
                                 Thiết bị
                             </div>
                         </div>
@@ -91,8 +94,8 @@ const Navbar = () => {
                             }`}
                             onClick={() => handleTabChange(2)}
                         >
-                            <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
-                                <ChatBubbleLeftRightIcon className="w-12 h-12 mr-4" />
+                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                                <ChatBubbleLeftRightIcon className='w-12 h-12 mr-4' />
                                 Dịch vụ
                             </div>
                         </div>
@@ -104,8 +107,8 @@ const Navbar = () => {
                             }`}
                             onClick={() => handleTabChange(3)}
                         >
-                            <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
-                                <Square3Stack3DIcon className="w-12 h-12 mr-4" />
+                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                                <Square3Stack3DIcon className='w-12 h-12 mr-4' />
                                 Cấp số
                             </div>
                         </div>
@@ -117,8 +120,8 @@ const Navbar = () => {
                             }`}
                             onClick={() => handleTabChange(4)}
                         >
-                            <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
-                                <DocumentChartBarIcon className="w-12 h-12 mr-4" />
+                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                                <DocumentChartBarIcon className='w-12 h-12 mr-4' />
                                 Báo cáo
                             </div>
                         </div>
@@ -131,19 +134,19 @@ const Navbar = () => {
                                     : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
                             }`}
                         >
-                            <div className="full-size pl-8 flex items-center">
-                                <Cog6ToothIcon className="w-12 h-12 mr-4" />
+                            <div className='full-size pl-8 flex items-center'>
+                                <Cog6ToothIcon className='w-12 h-12 mr-4' />
                                 Cài đặt hệ thống
                             </div>
                             <div
                                 onMouseEnter={() => toggle(true)}
                                 onMouseLeave={() => toggle(false)}
-                                className="relative z-20"
+                                className='relative z-20'
                             >
-                                <div className="h-20 flex items-center relative">
-                                    <EllipsisVerticalIcon className="w-12 h-12 pr-4 " />
+                                <div className='h-20 flex items-center relative'>
+                                    <EllipsisVerticalIcon className='w-12 h-12 pr-4 ' />
                                 </div>
-                                <div className="w-[220px] absolute bg-white top-0 left-full rounded-tr-2xl ">
+                                <div className='w-[220px] absolute bg-white top-0 left-full rounded-tr-3xl rounded-br-3xl'>
                                     {toggleSubMenu && (
                                         <ul>
                                             <li
@@ -192,11 +195,11 @@ const Navbar = () => {
 
                 <div
                     onClick={() => handleTabChange(5)}
-                    className="absolute right-2 top-2"
+                    className='absolute right-2 top-2'
                 >
                     <User />
                 </div>
-                <div className="full-size flex">
+                <div className='full-size flex'>
                     {/* Conditional rendering based on selectedIndex */}
                     {selectedIndex === 0 && <DashboardContainer />}
                     {selectedIndex === 1 && <DeviceContainer />}
@@ -205,16 +208,16 @@ const Navbar = () => {
                     {selectedIndex === 4 && <ReportContainer />}
                     {selectedIndex === 5 && <UserInfo />}
                     {selectedIndex === 6 && <RoleContainer />}
-                    {/* {selectedIndex === 6 && <RoleContainer />} */}
+                    {selectedIndex === 7 && <AccountContainer />}
                     {/* {selectedIndex === 6 && <RoleContainer />} */}
                 </div>
             </div>
-            <div className="mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white">
+            <div className='mx-4 my-12 z-10 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white'>
                 <button
                     onClick={handleLogout}
-                    className="flex pl-4 text-3xl h-20 items-center"
+                    className='flex pl-4 text-3xl h-20 items-center'
                 >
-                    <ArrowUpTrayIcon className="w-12 stroke-2 rotate-90 h-12 mr-4" />
+                    <ArrowUpTrayIcon className='w-12 stroke-2 rotate-90 h-12 mr-4' />
                     Đăng xuất
                 </button>
             </div>

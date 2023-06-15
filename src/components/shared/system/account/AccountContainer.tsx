@@ -1,135 +1,139 @@
-import { Listbox, Transition } from '@headlessui/react';
 import React, { useEffect, useState } from 'react';
 import {
     ChevronDownIcon,
-    ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
     MagnifyingGlassIcon,
     PlusIcon,
 } from '@heroicons/react/24/outline';
-import AddService from './AddService';
 import { firestore } from 'server/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import UpdateService from './UpdateService';
-import ReactPaginate from 'react-paginate';
-import DetailService from './DetailService';
-import { Service } from 'types';
+import AddAccount from './AddAccount';
+import { Account, Role } from 'types';
+import { Listbox, Transition } from '@headlessui/react';
+import UpdateAccount from './UpdateAccount';
 import Loading from 'components/loading/Loading';
 
-const ServiceContainer = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const activeStatus = ['Tất cả', 'Hoạt động', 'Ngưng hoạt động'];
-    const [activeStatusSelect, setActiveStatusSelect] = useState(
-        activeStatus[0],
-    );
-
-    const [activeOpen, setActiveOpen] = useState(false);
+const AccountContainer = () => {
     const [isParentVisible, setIsParentVisible] = useState(true);
-    const [showAddService, setShowAddService] = useState(false);
-    const [showDetailService, setShowDetailService] = useState(false);
-    const [showUpdateService, setShowUpdateService] = useState(false);
+    const [showAddAccount, setShowAddAccount] = useState(false);
+    const [showUpdateAccount, setShowUpdateAccount] = useState(false);
+    const [isOpenRole, setIsOpenRole] = useState(false);
 
-    const showAddServiceComponent = () => {
+    const showAddAccountComponent = () => {
         setIsParentVisible(!isParentVisible);
-        setShowAddService(!showAddService);
+        setShowAddAccount(!showAddAccount);
     };
 
-    const [serviceData, setServiceData] = useState<Service | null>(null);
-    const [serviceId, setServiceId] = useState('');
+    const [accountData, setAccountData] = useState<Account | null>(null);
+    const [accountId, setAccountId] = useState('');
 
-    const showDetailServiceComponent = async (id: string) => {
+    const showUpdateAccountComponent = async (id: string) => {
         try {
-            const serviceRef = doc(firestore, 'services', id);
-            const serviceSnapshot = await getDoc(serviceRef);
-            const serviceData = serviceSnapshot.data() as Service | null;
+            const accountRef = doc(firestore, 'users', id);
+            const accountSnapshot = await getDoc(accountRef);
+            const accountData = accountSnapshot.data() as Account | null;
 
-            setServiceData(serviceData);
-            setServiceId(id);
+            setAccountData(accountData);
+            setAccountId(id);
 
             setIsParentVisible(!isParentVisible);
-            setShowDetailService(!showDetailService);
+            setShowUpdateAccount(!showUpdateAccount);
         } catch (error) {
-            console.log('Error fetching service data:', error);
+            console.log('Error fetching device data:', error);
         }
     };
 
-    const showUpdateServiceComponent = async (id: string) => {
-        try {
-            const serviceRef = doc(firestore, 'services', id);
-            const serviceSnapshot = await getDoc(serviceRef);
-            const serviceData = serviceSnapshot.data() as Service | null;
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [roleTypeSelect, setRoleTypeSelect] = useState('Tất cả');
 
-            setServiceData(serviceData);
-            setServiceId(id);
-
-            setIsParentVisible(!isParentVisible);
-            setShowUpdateService(!showUpdateService);
-        } catch (error) {
-            console.log('Error fetching Service data:', error);
-        }
-    };
-
-    const [services, setServices] = useState<Service[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const fetchServices = async () => {
+        const fetchRoles = async () => {
             try {
                 setIsLoading(true);
-                const servicesRef = collection(firestore, 'services');
-                const querySnapshot = await getDocs(servicesRef);
-                const servicesData = querySnapshot.docs.map((doc) => {
-                    const serviceData = doc.data() as Service;
-                    const serviceId = doc.id;
-                    return { ...serviceData, id: serviceId };
+                const devicesRef = collection(firestore, 'roles');
+                const querySnapshot = await getDocs(devicesRef);
+                const rolesData = querySnapshot.docs.map((doc) => {
+                    const roleData = doc.data() as Role;
+                    const roleId = doc.id;
+                    return { ...roleData, id: roleId };
                 });
-                setServices(servicesData);
+
+                // Thêm lựa chọn "Tất cả" vào đầu mảng roles
+                const allRoleOption = { roleName: 'Tất cả', id: 'all' };
+                const updatedRolesData = [allRoleOption, ...rolesData];
+
+                // @ts-ignore
+                setRoles(updatedRolesData);
                 setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
-                console.log('Error fetching services:', error);
+                console.log('Error fetching devices:', error);
             }
         };
 
-        fetchServices();
+        fetchRoles();
     }, []);
 
-    const [pageNumber, setPageNumber] = useState(0);
+    const [accounts, setAccounts] = useState<Account[]>([]);
 
-    const servicesPerPage = 9;
-    const pagesVisited = pageNumber * servicesPerPage;
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            try {
+                setIsLoading(true);
+                const devicesRef = collection(firestore, 'users');
+                const querySnapshot = await getDocs(devicesRef);
+                const accountsData = querySnapshot.docs.map((doc) => {
+                    const accountData = doc.data() as Account;
+                    const accountId = doc.id;
+                    return { ...accountData, id: accountId };
+                });
+                setAccounts(accountsData);
+                setIsLoading(false);
+            } catch (error) {
+                setIsLoading(false);
+                console.log('Error fetching devices:', error);
+            }
+        };
+
+        fetchAccounts();
+    }, []);
 
     const [searchTerm, setSearchTerm] = useState('');
 
-    const displayServices = services
-        .filter((service) => {
-            // Lọc theo trạng thái hoạt động
-            if (activeStatusSelect === 'Tất cả') {
+    const displayAccounts = accounts
+        .filter((account) => {
+            // Lọc theo vai trò
+            if (roleTypeSelect === 'Tất cả') {
+                // Hiển thị tất cả các tài khoản
                 return true;
             }
-            return (
-                (activeStatusSelect === 'Hoạt động' && service.active) ||
-                (activeStatusSelect === 'Ngưng hoạt động' && !service.active)
-            );
+            // Lọc dựa trên trường role của account
+            return account.role === roleTypeSelect;
         })
-
-        .filter((service) => {
+        .filter((account) => {
             // Lọc theo từ khóa tìm kiếm
             if (!searchTerm) {
                 return true;
             }
-            // Lọc dựa trên thuộc tính của service mà bạn muốn tìm kiếm, ví dụ: service.serviceCode, service.serviceName, ...
+            // Lọc dựa trên thuộc tính của device mà bạn muốn tìm kiếm, ví dụ: device.deviceCode, device.deviceName, ...
             return (
-                service.serviceCode.toLowerCase().includes(searchTerm) ||
-                service.serviceName.toLowerCase().includes(searchTerm) ||
-                service.description.toLowerCase().includes(searchTerm) ||
-                service.serviceCode.includes(searchTerm) ||
-                service.serviceName.includes(searchTerm) ||
-                service.description.includes(searchTerm)
+                account.username.toLowerCase().includes(searchTerm) ||
+                account.fullName.toLowerCase().includes(searchTerm) ||
+                account.phone.toLowerCase().includes(searchTerm) ||
+                account.email.toLowerCase().includes(searchTerm) ||
+                account.role.toLowerCase().includes(searchTerm) ||
+                account.username.includes(searchTerm) ||
+                account.fullName.includes(searchTerm) ||
+                account.phone.includes(searchTerm) ||
+                account.email.includes(searchTerm) ||
+                account.role.includes(searchTerm)
             );
         })
-        .slice(pagesVisited, pagesVisited + servicesPerPage)
-        .map((service, index, array) => {
+
+        .map((account, index, array) => {
             const isMultipleOfTwo = (index + 1) % 2 === 0;
             const trClasses = isMultipleOfTwo ? 'bg-orange-50' : 'bg-white';
 
@@ -151,21 +155,28 @@ const ServiceContainer = () => {
 
             return (
                 <>
-                    <React.Fragment key={service.id}>
+                    <React.Fragment key={account.id}>
                         <tr className={`rounded-tl-2xl h-24 ${trClasses}`}>
                             <th
                                 className={`px-6 font-thin text-start ${roundedLeft}`}
                             >
-                                {service.serviceCode}
+                                {account.username}
                             </th>
-                            <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {service.serviceName}
+                            <th className='border border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                                {account.fullName}
                             </th>
-                            <th className='border border-orange-200 w-[166px] pl-6 pr-16 font-thin text-start '>
-                                {service.description}
+
+                            <th className='border border-orange-200 w-[180px] pl-6 pr-16 font-thin text-start '>
+                                {account.phone}
                             </th>
-                            <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {service.active ? (
+                            <th className='border  border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                                {account.email}
+                            </th>
+                            <th className='border  border-orange-200 w-[150px] pl-6 pr-16 font-thin text-start '>
+                                {account.role}
+                            </th>
+                            <th className='border  border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                                {account.active ? (
                                     <div className='flex'>
                                         <div className='w-3 h-3 mt-3 mr-3 rounded-full bg-green-500'></div>
                                         <span>Đang hoạt động</span>
@@ -177,20 +188,11 @@ const ServiceContainer = () => {
                                     </div>
                                 )}
                             </th>
-
                             <th
                                 onClick={() =>
-                                    showDetailServiceComponent(service.id)
+                                    showUpdateAccountComponent(account.id)
                                 }
-                                className='border border-orange-200 w-[92px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start '
-                            >
-                                Chi tiết
-                            </th>
-                            <th
-                                onClick={() =>
-                                    showUpdateServiceComponent(service.id)
-                                }
-                                className={` w-[108px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start  ${roundedRight}`}
+                                className={`w-[112px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start  ${roundedRight}`}
                             >
                                 Cập nhật
                             </th>
@@ -199,12 +201,6 @@ const ServiceContainer = () => {
                 </>
             );
         });
-
-    const pageCount = Math.ceil(services.length / servicesPerPage);
-
-    const changePage = ({ selected }: any) => {
-        setPageNumber(selected);
-    };
 
     return (
         <>
@@ -215,53 +211,54 @@ const ServiceContainer = () => {
                         <div className='flex full-size flex-col'>
                             <div className='h-32 mx-12 flex items-center'>
                                 <div className='text-gray-500 text-3xl font-bold font-primary'>
-                                    Dịch vụ
+                                    Cài đặt hệ thống
                                 </div>
                                 <ChevronRightIcon className='h-8 w-8 mx-6 stroke-gray-500' />
                                 <div className='text-orange-500 text-3xl font-bold font-primary'>
-                                    Danh sách dịch vụ
+                                    Quản lý tài khoản
                                 </div>
                             </div>
 
                             <div className='m-12 my-12 text-4xl font-extrabold font-primary text-orange-500'>
-                                Quản lý dịch vụ
+                                Danh sách tài khoản
                             </div>
                             <div className='flex ml-12 mr-64 mb-12'>
                                 <div className='w-[400px] z-20'>
                                     <div className='text-3xl'>
-                                        Trạng thái hoạt động
+                                        Tên vai trò
                                     </div>
                                     <Listbox
-                                        value={activeStatusSelect}
+                                        value={roleTypeSelect}
                                         onChange={(value) => {
-                                            setActiveStatusSelect(value);
-                                            setActiveOpen(false);
+                                            setRoleTypeSelect(value);
+                                            setIsOpenRole(false);
                                         }}
                                     >
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Button
                                                     className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
-                                                        activeOpen
+                                                        isOpenRole
                                                             ? 'ring-orange-200 ring-2'
-                                                            : ''
+                                                            : 'ring-gray-300'
                                                     }`}
                                                     onClick={() =>
-                                                        setActiveOpen(
-                                                            !activeOpen,
+                                                        setIsOpenRole(
+                                                            !isOpenRole,
                                                         )
                                                     }
                                                 >
-                                                    <span className='block text-3xl truncate'>
-                                                        {activeStatusSelect}
-                                                    </span>
+                                                                 <span className='block text-3xl truncate'>
+                                                                    {roleTypeSelect ||
+                                                                        'Tất cả'}
+                                                                </span>
                                                     <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
-                                                        {activeOpen ? (
-                                                            <ChevronUpIcon className='w-8 h-8 stroke-2 stroke-orange-500' />
-                                                        ) : (
-                                                            <ChevronDownIcon className='w-8 h-8 stroke-2 stroke-orange-500' />
-                                                        )}
-                                                    </span>
+                                                                    {isOpenRole ? (
+                                                                        <ChevronUpIcon className='w-8 h-8 stroke-2 stroke-orange-500' />
+                                                                    ) : (
+                                                                        <ChevronDownIcon className='w-8 h-8 stroke-2 stroke-orange-500' />
+                                                                    )}
+                                                                </span>
                                                 </Listbox.Button>
                                                 <Transition
                                                     show={open}
@@ -274,38 +271,42 @@ const ServiceContainer = () => {
                                                 >
                                                     <Listbox.Options
                                                         static
-                                                        className='absolute z-20 w-full text-3xl bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'
+                                                        className='absolute w-full mt-[1px] text-[16px] bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-scroll z-50 focus:outline-none'
                                                     >
-                                                        {activeStatus.map(
-                                                            (option) => (
+                                                        {roles.map(
+                                                            (
+                                                                role,
+                                                            ) => (
                                                                 <Listbox.Option
-                                                                    key={option}
+                                                                    key={
+                                                                        role.id
+                                                                    }
                                                                     value={
-                                                                        option
+                                                                        role.roleName
                                                                     }
                                                                 >
                                                                     {({
                                                                           active,
-                                                                          selected,
                                                                       }) => (
                                                                         <div
-                                                                            className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                            className={`cursor-default text-[16px] select-none relative py-6 pl-6 pr-9 ${
                                                                                 active
                                                                                     ? 'bg-orange-100 text-black'
                                                                                     : ''
                                                                             }`}
                                                                         >
-                                                                            <span
-                                                                                className={`block text-2xl truncate ${
-                                                                                    selected
-                                                                                        ? 'font-medium'
-                                                                                        : 'font-normal'
-                                                                                }`}
-                                                                            >
-                                                                                {
-                                                                                    option
-                                                                                }
-                                                                            </span>
+                                                                                        <span
+                                                                                            className={`flex items-center text-[16px] h-6 ${
+                                                                                                roleTypeSelect ===
+                                                                                                role.roleName
+                                                                                                    ? 'font-medium'
+                                                                                                    : 'font-normal'
+                                                                                            }`}
+                                                                                        >
+                                                                                            {
+                                                                                                role.roleName
+                                                                                            }
+                                                                                        </span>
                                                                         </div>
                                                                     )}
                                                                 </Listbox.Option>
@@ -317,7 +318,6 @@ const ServiceContainer = () => {
                                         )}
                                     </Listbox>
                                 </div>
-
                                 <div className='flex w-full mr-2 justify-end'>
                                     <div className='w-[300px] '>
                                         <div className='text-3xl'>Từ khóa</div>
@@ -344,77 +344,57 @@ const ServiceContainer = () => {
                             <div className='mx-12 z-0 text-start flex text-3xl font-light font-primary'>
                                 <table className='table-auto relative z-0 rounded-tl-2xl text-start drop-shadow-xl '>
                                     <thead>
-                                    <tr className='rounded-tl-2xl h-24 font-bold bg-orange-500 text-white'>
+                                    <tr className='h-24 font-bold bg-orange-500 text-white'>
                                         <th className='border px-6 font-bold text-start rounded-tl-3xl'>
-                                            Mã dịch vụ
+                                            Tên đăng nhập
                                         </th>
-                                        <th className='border w-[350px] px-6 font-bold text-start'>
-                                            Tên dịch vụ
+                                        <th className='border w-[250px] px-6 font-bold text-start'>
+                                            Họ tên
                                         </th>
-                                        <th className='border px-6 w-[350px] font-bold text-start'>
-                                            Mô tả
+                                        <th className='border w-[180px] pl-6 pr-16 font-bold text-start'>
+                                            Số điện thoại
                                         </th>
-                                        <th className='border px-6 w-[350px] font-bold text-start'>
+                                        <th className='border w-[250px] pl-6 pr-16 font-bold text-start'>
+                                            Email
+                                        </th>
+                                        <th className='border w-[150px] pl-6 pr-16 font-bold text-start'>
+                                            Vai trò
+                                        </th>
+                                        <th className='border w-[250px] pl-6 pr-16 font-bold text-start'>
                                             Trạng thái hoạt động
                                         </th>
-
-                                        <th className='border w-[92px] px-6 font-bold text-start'></th>
-                                        <th className='border px-6 w-[108px] font-bold text-start rounded-tr-3xl'></th>
+                                        <th className='border px-6 w-[112px] font-bold text-start rounded-tr-3xl'></th>
                                     </tr>
                                     </thead>
-                                    <tbody>{displayServices}</tbody>
+                                    <tbody>{displayAccounts}</tbody>
                                 </table>
 
                                 <button
-                                    onClick={showAddServiceComponent}
+                                    onClick={showAddAccountComponent}
                                     className='flex flex-col transition-colors duration-300 group cursor-pointer hover:bg-orange-alta absolute right-0 justify-center items-center w-40 h-48 bg-orange-100 rounded-tl-2xl rounded-bl-2xl drop-shadow-xl shadow-xl'
                                 >
                                     <div className='w-11 h-11 absolute-center bg-orange-500 group-hover:bg-orange-100 rounded-xl hover:text-white'>
                                         <PlusIcon className='w-8 h-8 stroke-white group-hover:stroke-orange-alta stroke-2' />
                                     </div>
                                     <div className='text-center text-orange-500 group-hover:text-orange-100 mt-4 w-36'>
-                                        Thêm dịch vụ
+                                        Thêm
+                                    </div>
+                                    <div className='text-center text-orange-500 group-hover:text-orange-100 w-36'>
+                                        tài khoản
                                     </div>
                                 </button>
-                            </div>
-                            <div className='flex w-full justify-end'>
-                                <ReactPaginate
-                                    previousLabel={
-                                        <ChevronLeftIcon className='w-10 h-10' />
-                                    }
-                                    nextLabel={
-                                        <ChevronRightIcon className='w-10 h-10' />
-                                    }
-                                    pageCount={pageCount}
-                                    onPageChange={changePage}
-                                    containerClassName={'pagination'}
-                                    previousLinkClassName={'previous_page'}
-                                    nextLinkClassName={'next_page'}
-                                    disabledClassName={'pagination_disabled'}
-                                    activeClassName={'pagination_active'}
-                                    pageLinkClassName={'page_link'}
-                                />
                             </div>
                         </div>
                     </>
                 )}
-
-                {showAddService && <AddService />}
-                {showDetailService && (
-                    <DetailService
-                        serviceData={serviceData}
-                        serviceId={serviceId}
-                    />
-                )}
-                {showUpdateService && (
-                    <UpdateService
-                        serviceData={serviceData}
-                        serviceId={serviceId}
-                    />
-                )}
+                {showAddAccount && <AddAccount />}
+                {showUpdateAccount && <UpdateAccount
+                    accountData={accountData}
+                    accountId={accountId}
+                />}
             </div>
         </>
     );
 };
 
-export default ServiceContainer;
+export default AccountContainer;

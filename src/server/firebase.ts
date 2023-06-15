@@ -1,7 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, updateProfile } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
 const config = {
     apiKey: 'AIzaSyDOs8fHnzl6bE5P6Kv7lNt7Q7A6w52v2WA',
@@ -15,7 +13,6 @@ const config = {
 const app = initializeApp(config);
 
 // Lấy instance của dịch vụ Authentication và Firestore
-export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 
 // const storage = getStorage();

@@ -1,83 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { auth, firestore } from '../../server/firebase';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import Navbar from '../partials/Navbar';
-import InformationModal from '../modal/InformationModal';
-import { getFirestore, collection, doc, getDoc } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store';
+import NavbarNoLogin from '../partials/NavbarNoLogin';
 
 const MainPage = () => {
-    const navigate = useNavigate();
-    const [showDialog, setShowDialog] = useState(false);
 
-    const user = auth.currentUser;
-
-    console.log(user);
-
-    useEffect(() => {
-        const checkUserLoggedIn = async () => {
-            const user = auth.currentUser;
-            if (!user) {
-                // User is not logged in, redirect to the login page
-                navigate('/login');
-            } else {
-                // Check if the user has provided personal information
-                const userDocRef = doc(
-                    collection(firestore, 'users'),
-                    user.uid,
-                );
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (
-                    !userDocSnap.exists() ||
-                    !userDocSnap.data()?.fullName ||
-                    !userDocSnap.data()?.phone
-                ) {
-                    // Show the personal information dialog
-                    setShowDialog(true);
-                }
-            }
-        };
-
-        checkUserLoggedIn();
-    }, [navigate]);
-
-    const checkUserInformation = async () => {
-        const user = auth.currentUser;
-        if (user) {
-            try {
-                const userDocRef = doc(
-                    collection(firestore, 'users'),
-                    user.uid,
-                );
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    console.log('User information:', userData);
-                } else {
-                    console.log('User does not exist in Firestore.');
-                }
-            } catch (error) {
-                console.error('Error retrieving user information:', error);
-            }
-        } else {
-            console.log('User is not logged in.');
-        }
-    };
-
-    useEffect(() => {
-        checkUserInformation();
-    }, []);
+    const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
     return (
         <>
-            <div className="full-size flex">
-                <Navbar />
+            <div className='full-size flex'>
+                {isLoggedIn ? (<Navbar />) : (<NavbarNoLogin />)}
             </div>
-            <InformationModal
-                showDialog={showDialog}
-                setShowDialog={setShowDialog}
-            />
         </>
     );
 };

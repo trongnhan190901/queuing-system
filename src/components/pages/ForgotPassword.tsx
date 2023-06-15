@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { auth, firestore } from '../../server/firebase'; // Thay đổi import này nếu cần
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { firestore } from 'server/firebase'; // Thay đổi import này nếu cần
 
 const ForgotPassword = () => {
     const [backupEmail, setBackupEmail] = useState('');
@@ -41,18 +41,18 @@ const ForgotPassword = () => {
 
     return (
         <>
-            <div className="flex full-size">
-                <div className="w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col">
+            <div className='flex full-size'>
+                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
                     <img
-                        className="w-[250px] my-12 h-fit"
-                        src="/logo.png"
-                        alt=""
+                        className='w-[250px] my-12 h-fit'
+                        src='/logo.png'
+                        alt=''
                     />
 
-                    <div className="text-2xl font-secondary">
-                        <div className="flex flex-col space-y-3">
-                            <div className="w-full flex-col mb-6 absolute-center space-y-4">
-                                <div className="font-bold text-4xl">
+                    <div className='text-2xl font-secondary'>
+                        <div className='flex flex-col space-y-3'>
+                            <div className='w-full flex-col mb-6 absolute-center space-y-4'>
+                                <div className='font-bold text-4xl'>
                                     Đặt lại mật khẩu
                                 </div>
                             </div>
@@ -62,7 +62,7 @@ const ForgotPassword = () => {
                                 *
                             </label>
                             <input
-                                type="text"
+                                type='text'
                                 value={backupEmail}
                                 className={`w-[400px] mt-2 focus:outline-none h-[40px] border rounded-xl px-6 ${
                                     emailExists ? '' : 'border-red-500'
@@ -73,10 +73,10 @@ const ForgotPassword = () => {
                                     setError('');
                                 }}
                             />
-                            <div className="h-12 mt-6">
+                            <div className='h-12 mt-6'>
                                 {submitClicked && !emailExists && (
-                                    <div className="w-full flex-col mb-6 flex space-y-4">
-                                        <div className="text-2xl text-red-500 block">
+                                    <div className='w-full flex-col mb-6 flex space-y-4'>
+                                        <div className='text-2xl text-red-500 block'>
                                             {error ||
                                                 'Email không đúng hoặc không tồn tại'}
                                         </div>
@@ -84,16 +84,16 @@ const ForgotPassword = () => {
                                 )}
                             </div>
                         </div>
-                        <div className="w-full mt-4 justify-center flex space-x-6">
+                        <div className='w-full mt-4 justify-center flex space-x-6'>
                             <Link to={'/login'}>
-                                <button className="mt-6 w-[150px] rounded-xl h-[40px] bg-white border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white">
+                                <button className='mt-6 w-[150px] rounded-xl h-[40px] bg-white border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white'>
                                     Hủy
                                 </button>
                             </Link>
 
                             <button
                                 onClick={handleResetPassword}
-                                className="mt-6 w-[150px] rounded-xl h-[40px] border-orange-alta bg-orange-alta text-white font-secondary font-bold hover:bg-white border hover:border-orange-alta hover:text-orange-alta"
+                                className='mt-6 w-[150px] rounded-xl h-[40px] border-orange-alta bg-orange-alta text-white font-secondary font-bold hover:bg-white border hover:border-orange-alta hover:text-orange-alta'
                             >
                                 Tiếp tục
                             </button>
