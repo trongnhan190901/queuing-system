@@ -118,7 +118,7 @@ const ServiceContainer = () => {
             if (!searchTerm) {
                 return true;
             }
-            // Lọc dựa trên thuộc tính của service mà bạn muốn tìm kiếm, ví dụ: service.serviceCode, service.serviceName, ...
+            // Lọc dựa trên thuộc tính
             return (
                 service.serviceCode.toLowerCase().includes(searchTerm) ||
                 service.serviceName.toLowerCase().includes(searchTerm) ||

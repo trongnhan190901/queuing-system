@@ -142,7 +142,7 @@ const DeviceContainer = () => {
             if (!searchTerm) {
                 return true;
             }
-            // Lọc dựa trên thuộc tính của device mà bạn muốn tìm kiếm, ví dụ: device.deviceCode, device.deviceName, ...
+            // Lọc dựa trên thuộc tính
             return (
                 device.deviceCode.toLowerCase().includes(searchTerm) ||
                 device.deviceName.toLowerCase().includes(searchTerm) ||

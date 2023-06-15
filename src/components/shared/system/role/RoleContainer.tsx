@@ -84,8 +84,7 @@ const RoleContainer = () => {
 
             const isLast = index === array.length - 1;
             const isMultipleOfNine = (index + 1) % 9 === 0;
-
-            // Kiểm tra và áp dụng kiểu bo cong tương ứng
+            
             const roundedRight = `${
                 isLast || isMultipleOfNine
                     ? 'rounded-br-3xl border-solid '
