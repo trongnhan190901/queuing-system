@@ -1,11 +1,11 @@
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
-import NumberContainer from '../shared/number/NumberContainer';
+import AddNumber from '../shared/number/AddNumber';
 
 const NavbarNoLogin = () => {
     return (
         <>
             <div className='relative full-size flex z-20'>
-                <div className='w-[240px] h-full font-medium font-primary flex flex-col'>
+                <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
                     <div className='flex justify-center w-full'>
                         <img
                             className='w-[150px] my-12 h-fit'
@@ -24,8 +24,8 @@ const NavbarNoLogin = () => {
                         </div>
                     </div>
                 </div>
-                <div className='full-size flex'>
-                    <NumberContainer />
+                <div className='w-full max-h-screen h-screen flex flex-col bg-gray-200'>
+                    <AddNumber />
                 </div>
             </div>
         </>

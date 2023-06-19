@@ -51,3 +51,16 @@ interface Role {
     featBY: boolean;
     featBZ: boolean;
 }
+
+interface Number {
+    id: string;
+    fullName: string;
+    phone: string;
+    email: string;
+    status: string;
+    createdAt: string;
+    expirationTime: string;
+    serviceSelect: string;
+    source: string;
+    number: string;
+}

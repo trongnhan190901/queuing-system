@@ -51,7 +51,7 @@ const Navbar = () => {
     return (
         <>
             <div className='relative full-size flex z-20'>
-                <div className='w-[240px] h-full font-medium font-primary flex flex-col'>
+                <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
                     <div className='flex justify-center w-full'>
                         <img
                             className='w-[150px] my-12 h-fit'
