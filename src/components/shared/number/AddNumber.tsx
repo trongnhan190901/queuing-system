@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast';
 import NumberModal from 'components/modal/NumberModal';
 import { Number } from 'types';
 
+
 const AddNumber = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showAddNumber, setShowAddNumber] = useState(true);
@@ -24,10 +25,6 @@ const AddNumber = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
     const user = useSelector((state: RootState) => state.auth.user);
 
-    const [fullName, setFullName] = useState(user?.fullName || null);
-    const [phone, setPhone] = useState(user?.phone || null);
-    const [email, setEmail] = useState(user?.email || null);
-    const [source, setSource] = useState('Hệ thống');
     const [isServiceSelected, setIsServiceSelected] = useState(false);
 
     const showAddNumberComponent = () => {
@@ -41,9 +38,7 @@ const AddNumber = () => {
     const [serviceOpen, setServiceOpen] = useState(false);
     const [displayRedBorder, setDisplayRedBorder] = useState(false);
 
-
     const handleSubmit = () => {
-
         if (!serviceSelect) {
             setServiceOpen(true);
             setIsServiceSelected(false);
@@ -62,30 +57,20 @@ const AddNumber = () => {
             setIsServiceSelected(true);
         }
 
-        handleFormSubmit();
+        handleFormSubmit(user, 'Hệ thống');
     };
 
     const handleModalSubmit = (modalData: any) => {
         console.log(modalData);
-        if (serviceSelect && !isLoggedIn) {
-            setIsServiceSelected(true);
-            if (modalData && modalData.fullName && modalData.phone) {
-                setFullName(modalData.fullName);
-                setPhone(modalData.phone);
-
-                setEmail(modalData?.email || null);
-
-                setSource('Kiosk');
-                handleFormSubmit();
-            }
-        }
+        handleFormSubmit(modalData, 'Kiosk');
+        setShowDialog(false);
     };
 
 
-    const handleFormSubmit = async () => {
+    const handleFormSubmit = async (user: any, source: string) => {
         setIsSubmitted(true);
 
-        if (serviceSelect) {
+        if (serviceSelect && user.fullName && user.phone) {
             setIsServiceSelected(true);
             try {
                 setIsLoading(true);
@@ -99,22 +84,21 @@ const AddNumber = () => {
                 }
                 await setDoc(counterRef, { number });
 
-
                 // Tạo ngày và giờ hiện tại
                 const currentTime = new Date();
 
                 // Tính toán thời gian hết hạn
                 let expirationTime = new Date(currentTime);
-                expirationTime.setDate(expirationTime.getDate() + 1);
+                expirationTime.setDate(expirationTime.getDate());
                 expirationTime.setHours(18, 0, 0, 0);
                 if (currentTime.getHours() >= 18) {
                     expirationTime.setDate(expirationTime.getDate() + 1);
                 }
 
                 const data = {
-                    fullName,
-                    phone,
-                    email,
+                    fullName: user.fullName,
+                    phone: user.phone,
+                    email: user.email,
                     source,
                     status: 'WAITING',
                     serviceSelect,
@@ -134,6 +118,7 @@ const AddNumber = () => {
                 console.error('Error adding document: ', error);
             } finally {
                 setIsLoading(false);
+
             }
         }
     };

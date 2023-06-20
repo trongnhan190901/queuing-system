@@ -42,6 +42,10 @@ const InformationModal = ({ showDialog, setShowDialog, onSubmit }: InformationMo
         // Gọi callback function và truyền thông tin về component cha
         onSubmit(modalData);
 
+        setFullName('');
+        setPhone('');
+        setEmail('');
+
         // Đóng modal
         setShowDialog(false);
     };
