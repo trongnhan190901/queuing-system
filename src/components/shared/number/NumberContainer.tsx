@@ -207,7 +207,7 @@ const NumberContainer = () => {
                                 onClick={() =>
                                     showDetailNumberComponent(number.id)
                                 }
-                                className='border border-orange-200 w-[100px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start '
+                                className={` w-[110px] px-6 text-blue-500 cursor-pointer underline-offset-4 hover:no-underline underline font-thin text-start  ${roundedRight}`}
                             >
                                 Chi tiết
                             </th>
@@ -652,7 +652,7 @@ const NumberContainer = () => {
                         </div>
 
                         <div className='mx-12 text-start flex text-3xl font-light font-primary'>
-                            <table className='table-auto rounded-tl-2xl text-start drop-shadow-xl shadow-xl'>
+                            <table className='table-auto rounded-tl-2xl text-start drop-shadow-xl'>
                                 <thead>
                                 <tr className='rounded-tl-2xl h-24 font-bold bg-orange-500 text-white'>
                                     <th className='border w-[110px] px-6 font-bold text-start rounded-tl-3xl'>

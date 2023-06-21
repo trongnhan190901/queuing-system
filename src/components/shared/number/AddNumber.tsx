@@ -82,7 +82,9 @@ const AddNumber = () => {
                 if (counterSnap.exists()) {
                     number = counterSnap.data().number + 1;
                 }
-                await setDoc(counterRef, { number });
+
+                // Tăng số tự động
+                await setDoc(counterRef, { number: number });
 
                 // Tạo ngày và giờ hiện tại
                 const currentTime = new Date();
