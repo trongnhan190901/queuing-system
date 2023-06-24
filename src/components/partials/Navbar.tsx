@@ -21,6 +21,7 @@ import RoleContainer from '../shared/system/role/RoleContainer';
 import AccountContainer from '../shared/system/account/AccountContainer';
 import { useDispatch } from 'react-redux';
 import { logout } from 'store/authSlice';
+import LogContainer from '../shared/system/log/LogContainer';
 
 const Navbar = () => {
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
@@ -209,13 +210,13 @@ const Navbar = () => {
                     {selectedIndex === 5 && <UserInfo />}
                     {selectedIndex === 6 && <RoleContainer />}
                     {selectedIndex === 7 && <AccountContainer />}
-                    {/* {selectedIndex === 6 && <RoleContainer />} */}
+                    {selectedIndex === 8 && <LogContainer />}
                 </div>
             </div>
-            <div className='mx-4 my-12 z-10 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white'>
+            <div className='mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white'>
                 <button
                     onClick={handleLogout}
-                    className='flex pl-4 text-3xl h-20 items-center'
+                    className='flex pl-4 text-3xl cursor-pointer font-bold font-primary h-20 items-center'
                 >
                     <ArrowUpTrayIcon className='w-12 stroke-2 rotate-90 h-12 mr-4' />
                     Đăng xuất

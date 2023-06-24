@@ -3,9 +3,11 @@ import { Listbox, Transition } from '@headlessui/react';
 import { useState } from 'react';
 import DeviceContainer from './DeviceContainer';
 import { firestore } from 'server/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import Loading from 'components/loading/Loading';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 const AddDevice = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +22,8 @@ const AddDevice = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [serviceUse, setServiceUse] = useState('');
+
+    const user = useSelector((state: RootState) => state.auth.user);
 
     const handleFormSubmit = async () => {
         setIsSubmitted(true);
@@ -44,6 +48,15 @@ const AddDevice = () => {
                     serviceUse,
                     active: true,
                     connect: true,
+                    createdAt: serverTimestamp(),
+                });
+
+                const userId = user?.id;
+                // @ts-ignore
+                const userRef = doc(firestore, 'users', userId);
+                await updateDoc(userRef, {
+                    logs: `Thêm thiết bị ${deviceCode}`,
+                    updateTime: serverTimestamp(),
                 });
                 toast.success('Thêm thiết bị thành công');
                 setIsLoading(false);

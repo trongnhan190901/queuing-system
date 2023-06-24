@@ -1,13 +1,13 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Number } from 'types';
+import { NumberType } from 'types';
 import { dateFormat1 } from '../../helper/dateFormat';
 
 interface NumberModalProp {
     showResult: boolean;
     setShowResult: any;
-    resultData: Number | null;
+    resultData: NumberType | null;
 }
 
 const NumberModal = ({ showResult, setShowResult, resultData }: NumberModalProp) => {

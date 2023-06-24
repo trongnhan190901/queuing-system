@@ -12,6 +12,7 @@ export interface Service {
     startValueSurfix: string;
     enableEditReset: string;
     active: boolean;
+    createdAt: string;
 }
 
 export interface Device {
@@ -25,6 +26,7 @@ export interface Device {
     serviceUse: string;
     active: boolean;
     connect: boolean;
+    createdAt: string;
 }
 
 export interface Account {
@@ -37,9 +39,11 @@ export interface Account {
     password: string;
     active: boolean;
     role: string;
+    updateTime: string;
+    logs: string;
 }
 
-interface Role {
+export interface Role {
     id: string;
     roleName: string;
     roleDes: string;
@@ -52,7 +56,7 @@ interface Role {
     featBZ: boolean;
 }
 
-interface Number {
+export interface NumberType {
     id: string;
     fullName: string;
     phone: string;

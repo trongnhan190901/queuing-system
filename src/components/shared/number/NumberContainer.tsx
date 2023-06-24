@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import AddNumber from './AddNumber';
-import { Number } from '../../../types';
+import { NumberType } from '../../../types';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../../server/firebase';
 import { dateFormat2 } from '../../../helper/dateFormat';
@@ -39,7 +39,7 @@ const NumberContainer = () => {
         setShowAddNumber(!showAddNumber);
     };
 
-    const [numbers, setNumbers] = useState<Number[]>([]);
+    const [numbers, setNumbers] = useState<NumberType[]>([]);
 
     useEffect(() => {
         const fetchNumbers = async () => {
@@ -48,7 +48,7 @@ const NumberContainer = () => {
                 const numbersRef = collection(firestore, 'numbers');
                 const querySnapshot = await getDocs(numbersRef);
                 const numbersData = querySnapshot.docs.map((doc) => {
-                    const numberData = doc.data() as Number;
+                    const numberData = doc.data() as NumberType;
                     const numberId = doc.id;
                     return { ...numberData, id: numberId };
                 });
@@ -73,13 +73,13 @@ const NumberContainer = () => {
         fetchNumbers();
     }, []);
 
-    const [numberData, setNumberData] = useState<Number | null>(null);
+    const [numberData, setNumberData] = useState<NumberType | null>(null);
     const [numberId, setNumberId] = useState('');
     const showDetailNumberComponent = async (id: string) => {
         try {
             const numberRef = doc(firestore, 'numbers', id);
             const numberSnapshot = await getDoc(numberRef);
-            const numberData = numberSnapshot.data() as Number | null;
+            const numberData = numberSnapshot.data() as NumberType | null;
 
             setNumberData(numberData);
             setNumberId(id);

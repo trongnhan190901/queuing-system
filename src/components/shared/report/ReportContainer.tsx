@@ -1,6 +1,5 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, FolderArrowDownIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
-import { Number } from 'types';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from 'server/firebase';
 import { dateFormat2, getDate } from 'helper/dateFormat';
@@ -9,6 +8,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import Loading from 'components/loading/Loading';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { NumberType } from '../../../types';
 
 const ReportContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,7 @@ const ReportContainer = () => {
     const [statusOpen, setStatusOpen] = useState(false);
     const [sourceOpen, setSourceOpen] = useState(false);
 
-    const [numbers, setNumbers] = useState<Number[]>([]);
+    const [numbers, setNumbers] = useState<NumberType[]>([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedStartDate, setSelectedStartDate] = useState(new Date());
@@ -50,7 +50,7 @@ const ReportContainer = () => {
                 const numbersRef = collection(firestore, 'numbers');
                 const querySnapshot = await getDocs(numbersRef);
                 const numbersData = querySnapshot.docs.map((doc) => {
-                    const numberData = doc.data() as Number;
+                    const numberData = doc.data() as NumberType;
                     const numberId = doc.id;
                     return { ...numberData, id: numberId };
                 });

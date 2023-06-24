@@ -10,7 +10,7 @@ import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { firestore } from 'server/firebase';
 import { toast } from 'react-hot-toast';
 import NumberModal from 'components/modal/NumberModal';
-import { Number } from 'types';
+import { NumberType } from 'types';
 
 
 const AddNumber = () => {
@@ -19,7 +19,7 @@ const AddNumber = () => {
     const [showNumberContainer, setShowNumberContainer] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
     const [showResult, setShowResult] = useState(false);
-    const [docData, setDocData] = useState<Number | null>(null);
+    const [docData, setDocData] = useState<NumberType | null>(null);
 
 
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
@@ -133,7 +133,7 @@ const AddNumber = () => {
         if (docSnap.exists()) {
             const data = docSnap.data();
             if (data) {
-                const convertedData: Number = {
+                const convertedData: NumberType = {
                     id: data.id as string,
                     fullName: data.fullName as string,
                     phone: data.phone as string,
@@ -145,7 +145,7 @@ const AddNumber = () => {
                     source: data.source as string,
                     number: data.number as string,
                 };
-                setDocData(convertedData as Number);
+                setDocData(convertedData as NumberType);
             }
         } else {
             setDocData(null);

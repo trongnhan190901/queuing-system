@@ -2,11 +2,13 @@ import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XMarkIcon } from '@he
 import { Listbox, Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { firestore } from 'server/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import DeviceContainer from './DeviceContainer';
 import { Device } from 'types';
 import Loading from 'components/loading/Loading';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 interface UpdateDeviceProp {
     deviceData: Device | null;
@@ -28,6 +30,8 @@ const UpdateDevice = ({ deviceData, deviceId }: UpdateDeviceProp) => {
     const [username, setUsername] = useState(deviceData?.username);
     const [password, setPassword] = useState(deviceData?.password);
     const [serviceUse, setServiceUse] = useState(deviceData?.serviceUse);
+
+    const user = useSelector((state: RootState) => state.auth.user);
 
     const handleRemoveService = (index: number) => {
         if (deviceData) {
@@ -72,7 +76,6 @@ const UpdateDevice = ({ deviceData, deviceId }: UpdateDeviceProp) => {
             try {
                 setIsLoading(true);
                 const deviceRef = doc(firestore, 'devices', deviceId);
-
                 await updateDoc(deviceRef, {
                     deviceTypeSelect,
                     deviceCode,
@@ -82,7 +85,13 @@ const UpdateDevice = ({ deviceData, deviceId }: UpdateDeviceProp) => {
                     password,
                     serviceUse,
                 });
-
+                const userId = user?.id;
+                // @ts-ignore
+                const userRef = doc(firestore, 'users', userId);
+                await updateDoc(userRef, {
+                    logs: `Cập nhật thông tin thiết bị ${deviceCode}`,
+                    updateTime: serverTimestamp(),
+                });
                 toast.success('Cập nhật thiết bị thành công');
                 showDetailDeviceComponent();
                 console.log('Document updated with ID: ', deviceId);

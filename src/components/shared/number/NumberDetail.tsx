@@ -1,11 +1,11 @@
 import { ArrowUturnLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import NumberContainer from './NumberContainer';
-import { Number } from 'types';
+import { NumberType } from 'types';
 import { dateFormat2 } from 'helper/dateFormat';
 
 interface DetailNumberProp {
-    numberData: Number | null;
+    numberData: NumberType | null;
     numberId: string;
 }
 

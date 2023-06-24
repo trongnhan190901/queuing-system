@@ -2,9 +2,11 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import ServiceContainer from './ServiceContainer';
 import { firestore } from 'server/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import Loading from '../../loading/Loading';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 const AddService = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -71,6 +73,7 @@ const AddService = () => {
         setEndValueNumber(event.target.value);
     };
 
+    const user = useSelector((state: RootState) => state.auth.user);
     const handleFormSubmit = async () => {
         setIsSubmitted(true);
 
@@ -100,6 +103,13 @@ const AddService = () => {
                 showAddServiceComponent();
                 toast.success('Thêm dịch vụ thành công');
                 setIsLoading(false);
+                const userId = user?.id;
+                // @ts-ignore
+                const userRef = doc(firestore, 'users', userId);
+                await updateDoc(userRef, {
+                    logs: `Thêm dịch vụ ${serviceCode}`,
+                    updateTime: serverTimestamp(),
+                });
                 console.log('Document written with ID: ', docRef.id);
             } catch (error) {
                 toast.error('Thêm dịch vụ thất bại');

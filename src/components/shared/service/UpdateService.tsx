@@ -2,11 +2,13 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import ServiceContainer from './ServiceContainer';
 import { firestore } from 'server/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import DetailService from './DetailService';
 import { Service } from 'types';
 import Loading from 'components/loading/Loading';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 interface UpdateServiceProp {
     serviceData: Service | null;
@@ -84,6 +86,8 @@ const UpdateService = ({ serviceData, serviceId }: UpdateServiceProp) => {
         setEndValueNumber(event.target.value);
     };
 
+    const user = useSelector((state: RootState) => state.auth.user);
+
     const handleFormSubmit = async () => {
         setIsSubmitted(true);
 
@@ -106,11 +110,18 @@ const UpdateService = ({ serviceData, serviceId }: UpdateServiceProp) => {
                     enableEditReset,
                 });
 
-                toast.success('Cập nhật thiết bị thành công');
-                console.log('Document updated with ID: ', serviceId);
+                const userId = user?.id;
+                // @ts-ignore
+                const userRef = doc(firestore, 'users', userId);
+                await updateDoc(userRef, {
+                    logs: `Cập nhật thông tin dịch vụ ${serviceCode}`,
+                    updateTime: serverTimestamp(),
+                });
+                showAddServiceComponent();
+                toast.success('Cập nhật dịch vụ thành công');
             } catch (error) {
                 setIsLoading(false);
-                toast.error('Cập nhật thiết bị thất bại');
+                toast.error('Cập nhật dịch vụ thất bại');
                 console.error('Error updating document: ', error);
             } finally {
                 setIsLoading(false);

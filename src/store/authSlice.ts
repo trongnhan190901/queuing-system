@@ -30,7 +30,8 @@ export const login = createAsyncThunk(
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                const user = querySnapshot.docs[0].data() as Account;
+                const userDoc = querySnapshot.docs[0];
+                const user = { id: userDoc.id, ...userDoc.data() } as Account; // Thêm thuộc tính id vào đối tượng user
                 return user;
             } else {
                 throw new Error('Đăng nhập không thành công');

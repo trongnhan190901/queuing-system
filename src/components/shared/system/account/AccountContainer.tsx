@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     ChevronDownIcon,
+    ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
     MagnifyingGlassIcon,
@@ -13,6 +14,7 @@ import { Account, Role } from 'types';
 import { Listbox, Transition } from '@headlessui/react';
 import UpdateAccount from './UpdateAccount';
 import Loading from 'components/loading/Loading';
+import ReactPaginate from 'react-paginate';
 
 const AccountContainer = () => {
     const [isParentVisible, setIsParentVisible] = useState(true);
@@ -103,6 +105,17 @@ const AccountContainer = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [pageNumber, setPageNumber] = useState(0);
+
+    const numbersPerPage = 9;
+    const pagesVisited = pageNumber * numbersPerPage;
+
+    const pageCount = Math.ceil(accounts.length / numbersPerPage);
+
+    const changePage = ({ selected }: any) => {
+        setPageNumber(selected);
+    };
+
     const displayAccounts = accounts
         .filter((account) => {
             // Lọc theo vai trò
@@ -113,6 +126,7 @@ const AccountContainer = () => {
             // Lọc dựa trên trường role của account
             return account.role === roleTypeSelect;
         })
+        .slice(pagesVisited, pagesVisited + numbersPerPage)
         .filter((account) => {
             // Lọc theo từ khóa tìm kiếm
             if (!searchTerm) {
@@ -383,6 +397,24 @@ const AccountContainer = () => {
                                         tài khoản
                                     </div>
                                 </button>
+                            </div>
+                            <div className='flex w-full justify-end'>
+                                <ReactPaginate
+                                    previousLabel={
+                                        <ChevronLeftIcon className='w-10 h-10' />
+                                    }
+                                    nextLabel={
+                                        <ChevronRightIcon className='w-10 h-10' />
+                                    }
+                                    pageCount={pageCount}
+                                    onPageChange={changePage}
+                                    containerClassName={'pagination'}
+                                    previousLinkClassName={'previous_page'}
+                                    nextLinkClassName={'next_page'}
+                                    disabledClassName={'pagination_disabled'}
+                                    activeClassName={'pagination_active'}
+                                    pageLinkClassName={'page_link'}
+                                />
                             </div>
                         </div>
                     </>

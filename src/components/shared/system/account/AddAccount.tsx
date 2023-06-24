@@ -19,6 +19,8 @@ const AddAccount = () => {
     const [fullName, setFullName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [phoneValid, setPhoneValid] = useState(true);
+    const [emailValid, setEmailValid] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -110,6 +112,26 @@ const AddAccount = () => {
         ) {
             try {
                 setIsLoading(true);
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValidEmail = emailRegex.test(email);
+
+                const phoneRegex = /^0\d{9}$/;
+                const isValidPhone = phoneRegex.test(phone);
+
+                if (!isValidPhone) {
+                    toast.error('Số điện thoại không hợp lệ');
+                    setIsLoading(false);
+                    setPhoneValid(false);
+                    return;
+                }
+
+                if (!isValidEmail) {
+                    toast.error('Email không hợp lệ');
+                    setIsLoading(false);
+                    setEmailValid(false);
+                    return;
+                }
+
                 // Kiểm tra xem username đã tồn tại hay chưa
                 const usernameQuerySnapshot = await getDocs(query(uniqueUsernamesRef, where('name', '==', username)));
                 const existingUser = !usernameQuerySnapshot.empty;
@@ -251,15 +273,17 @@ const AddAccount = () => {
                                                 placeholder='Nhập số điện thoại'
                                                 type='text'
                                                 className={`w-[96%] focus:outline-none h-[40px] border rounded-xl px-6 ${
-                                                    isSubmitted && !phone
+                                                    isSubmitted && (!phone || !phoneValid)
                                                         ? 'border-red-500'
                                                         : ''
                                                 }`}
                                                 value={phone}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setPhone(
                                                         e.target.value,
-                                                    )
+                                                    );
+                                                    setPhoneValid(true);
+                                                }
                                                 }
                                             />
                                         </div>
@@ -275,15 +299,17 @@ const AddAccount = () => {
                                                 placeholder='Nhập email'
                                                 type='text'
                                                 className={`w-[96%] focus:outline-none h-[40px] border rounded-xl px-6 ${
-                                                    (isSubmitted && !email) || existingEmail
+                                                    (isSubmitted && (!email || !emailValid)) || existingEmail
                                                         ? 'border-red-500'
                                                         : ''
                                                 }`}
                                                 value={email}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setEmail(
                                                         e.target.value,
-                                                    )
+                                                    );
+                                                    setEmailValid(true);
+                                                }
                                                 }
                                             />
                                         </div>
