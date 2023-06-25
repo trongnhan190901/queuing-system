@@ -39,6 +39,7 @@ const NumberContainer = () => {
         setShowAddNumber(!showAddNumber);
     };
 
+
     const [numbers, setNumbers] = useState<NumberType[]>([]);
 
     useEffect(() => {
@@ -61,7 +62,6 @@ const NumberContainer = () => {
 
 
                 filteredNumbersData.sort((a, b) => a.number.toString().localeCompare(b.number.toString())); // Sắp xếp mảng theo trường "number"
-
                 setNumbers(filteredNumbersData);
                 setIsLoading(false);
             } catch (error) {
@@ -161,6 +161,7 @@ const NumberContainer = () => {
                     : 'border border-orange-200'
             } `;
 
+
             return (
                 <>
                     <React.Fragment key={number.id}>
@@ -177,10 +178,12 @@ const NumberContainer = () => {
                                 {number.serviceSelect}
                             </th>
                             <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {dateFormat2(number.createdAt)}
+                                {/*// @ts-ignore*/}
+                                {dateFormat2(number.createdAt.toDate().toISOString())}
                             </th>
                             <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {dateFormat2(number.expirationTime)}
+                                {/*// @ts-ignore*/}
+                                {dateFormat2(number.expirationTime.toDate().toISOString())}
                             </th>
                             <th className='border border-orange-200 w-[160px] px-6 font-thin text-start '>
                                 {number.status === 'WAITING' ? (

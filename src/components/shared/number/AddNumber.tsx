@@ -6,7 +6,7 @@ import { RootState } from 'store/store';
 import NumberContainer from './NumberContainer';
 import { Listbox, Transition } from '@headlessui/react';
 import InformationModal from 'components/modal/InformationModal';
-import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
 import { firestore } from 'server/firebase';
 import { toast } from 'react-hot-toast';
 import NumberModal from 'components/modal/NumberModal';
@@ -86,13 +86,12 @@ const AddNumber = () => {
                 // Tăng số tự động
                 await setDoc(counterRef, { number: number });
 
-                // Tạo ngày và giờ hiện tại
                 const currentTime = new Date();
 
                 // Tính toán thời gian hết hạn
                 let expirationTime = new Date(currentTime);
-                expirationTime.setDate(expirationTime.getDate());
                 expirationTime.setHours(18, 0, 0, 0);
+
                 if (currentTime.getHours() >= 18) {
                     expirationTime.setDate(expirationTime.getDate() + 1);
                 }
@@ -105,8 +104,8 @@ const AddNumber = () => {
                     status: 'WAITING',
                     serviceSelect,
                     number: String(number),
-                    createdAt: currentTime.toISOString(),
-                    expirationTime: expirationTime.toISOString(),
+                    createdAt: serverTimestamp(),
+                    expirationTime: Timestamp.fromDate(expirationTime),
                 };
 
                 const docRef = await addDoc(collection(firestore, 'numbers'), data);
@@ -139,8 +138,8 @@ const AddNumber = () => {
                     phone: data.phone as string,
                     email: data.email as string,
                     status: data.status as string,
-                    createdAt: data.createdAt as string,
-                    expirationTime: data.expirationTime as string,
+                    createdAt: data.createdAt.toDate().toISOString(),
+                    expirationTime: data.expirationTime.toDate().toISOString(),
                     serviceSelect: data.serviceSelect as string,
                     source: data.source as string,
                     number: data.number as string,

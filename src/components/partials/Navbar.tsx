@@ -195,10 +195,9 @@ const Navbar = () => {
                 </div>
 
                 <div
-                    onClick={() => handleTabChange(5)}
-                    className='absolute right-2 top-2'
+                    className='absolute z-40 right-2 top-2'
                 >
-                    <User />
+                    <User onClick={() => handleTabChange(5)} />
                 </div>
                 <div className='full-size flex'>
                     {/* Conditional rendering based on selectedIndex */}

@@ -80,8 +80,11 @@ const ReportContainer = () => {
     useEffect(() => {
         const newUniqueTimes: any[] = [];
         numbers.forEach((number) => {
-            if (newUniqueTimes.indexOf(dateFormat2(number.createdAt)) === -1) {
-                newUniqueTimes.push(dateFormat2(number.createdAt));
+
+            // @ts-ignore
+            if (newUniqueTimes.indexOf(dateFormat2(number.createdAt.toDate().toISOString())) === -1) {
+                // @ts-ignore
+                newUniqueTimes.push(dateFormat2(number.createdAt.toDate().toISOString()));
             }
         });
 
@@ -207,7 +210,8 @@ const ReportContainer = () => {
                                 {number.serviceSelect}
                             </th>
                             <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {dateFormat2(number.createdAt)}
+                                {/*// @ts-ignore*/}
+                                {dateFormat2(number.createdAt.toDate().toISOString())}
                             </th>
                             <th className='border border-orange-200 w-[160px] px-6 font-thin text-start '>
                                 {number.status === 'WAITING' ? (

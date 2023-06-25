@@ -1,28 +1,27 @@
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
 import { ArcElement, Chart, Legend, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NumberType } from '../../../types';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from '../../../server/firebase';
+import moment from 'moment';
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const NumberDoughnut = () => {
-
+const NumberDoughnut = ({ date }: { date: string }) => {
     const [totalNumber, setTotalNumber] = useState<number>(0);
     const [waitingNumber, setWaitingNumber] = useState<number>(0);
     const [usedNumber, setUsedNumebr] = useState<number>(0);
     const [skipNumber, setSkipNumber] = useState<number>(0);
-    const [value, setValue] = useState<number>(0);
+    const valueRef = useRef<number>(0);
     const [isDataFetched, setIsDataFetched] = useState<boolean>(false);
-
 
     useEffect(() => {
         const fetchNumbers = async () => {
             try {
                 const numbersRef = collection(firestore, 'numbers');
-                const querySnapshot = await getDocs(numbersRef);
+                const querySnapshot = await getDocs(query(numbersRef, where('createdAt', '>=', moment(date).startOf('day').toDate()), where('createdAt', '<=', moment(date).endOf('day').toDate())));
                 const numbersData = querySnapshot.docs.map((doc) => {
                     const numberData = doc.data() as NumberType;
                     const numberId = doc.id;
@@ -43,16 +42,17 @@ const NumberDoughnut = () => {
                 setSkipNumber(totalSkip);
                 const totalNumbers = filteredNumbersData.length;
                 setTotalNumber(totalNumbers);
-                setValue((totalUsed / totalNumbers) * 100);
+                valueRef.current = (totalUsed / totalNumbers) * 100;
+
+
                 setIsDataFetched(true);
             } catch (error) {
                 console.log('Lỗi khi tải thông tin số:', error);
             }
         };
 
-
         fetchNumbers();
-    }, []);
+    }, [date]);
 
     const data = {
         datasets: [
@@ -83,7 +83,7 @@ const NumberDoughnut = () => {
 
     const textCenter = {
         id: 'textCenter',
-        beforeDatasetDraw(chart: any) {
+        afterDatasetDraw(chart: any) {
             const { ctx } = chart;
 
             ctx.save();
@@ -91,8 +91,10 @@ const NumberDoughnut = () => {
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            
+            const valueToShow = isNaN(valueRef.current) ? 0 : valueRef.current.toFixed(0);
             ctx.fillText(
-                value.toFixed(0) + '%',
+                valueToShow + '%',
                 chart.getDatasetMeta(0).data[0].x,
                 chart.getDatasetMeta(0).data[0].y,
             );

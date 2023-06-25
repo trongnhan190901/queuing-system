@@ -4,8 +4,8 @@ import { firestore } from 'server/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { Account } from 'types';
 import Loading from 'components/loading/Loading';
-import { dateFormat3 } from '../../../../helper/dateFormat';
 import ReactPaginate from 'react-paginate';
+import { dateFormat3 } from '../../../../helper/dateFormat';
 
 const LogContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -92,7 +92,8 @@ const LogContainer = () => {
                                 {account.username}
                             </th>
                             <th className='border border-orange-200 w-[250px] px-6 font-thin text-start '>
-                                {dateFormat3(account.updateTime)}
+                                {/*// @ts-ignore*/}
+                                {dateFormat3(account.updateTime.toDate().toISOString())}
                             </th>
                             <th className='border  border-orange-200 w-[250px] px-6 font-thin text-start '>
                                 192.168.1.1
