@@ -12,8 +12,6 @@ interface DetailNumberProp {
 const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
     const [showDetailDevice, setShowDetailDevice] = useState(true);
     const [showContainer, setShowContainer] = useState(false);
-    const [showUpdateDevice, setShowUpdateDevice] = useState(false);
-    console.log(numberData);
 
     const showNumberContainer = () => {
         setShowDetailDevice(!showDetailDevice);
@@ -70,10 +68,12 @@ const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
                                                     {numberData?.number}
                                                 </div>
                                                 <div>
-                                                    {dateFormat2(numberData?.createdAt)}
+                                                    {/*// @ts-ignore*/}
+                                                    {dateFormat2(numberData?.createdAt.toDate().toISOString())}
                                                 </div>
                                                 <div>
-                                                    {dateFormat2(numberData?.expirationTime)}
+                                                    {/*// @ts-ignore*/}
+                                                    {dateFormat2(numberData?.expirationTime.toDate().toISOString())}
                                                 </div>
                                             </div>
                                         </div>
