@@ -1,7 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
-// import RegisterPage from './components/pages/RegisterPage';
 import MainPage from './components/shared/MainPage';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
@@ -10,9 +9,11 @@ import AddDevice from './components/shared/device/AddDevice';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import store from 'store/store';
-
+import DevicePage from './components/pages/device/[params]';
 
 const AppContent = () => {
+    const location = useLocation();
+
     return (
         <div className='full-size flex'>
             <Toaster
@@ -51,12 +52,10 @@ const AppContent = () => {
                     element={<AddDevice />}
                 />
 
-                {/*<Route*/}
-                {/*    element={<PrivateRoute*/}
-                {/*        path='/'*/}
-                {/*        element={<MainPage />}*/}
-                {/*    />}*/}
-                {/*/>*/}
+                <Route
+                    path={`/device/:params`}
+                    element={<DevicePage />}
+                />
             </Routes>
         </div>
     );

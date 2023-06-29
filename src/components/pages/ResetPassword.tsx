@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { EyeSlashIcon } from '@heroicons/react/24/outline';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { firestore } from '../../server/firebase';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const ResetPassword = () => {
     const [password1, setPassword1] = useState('');
@@ -7,6 +11,10 @@ const ResetPassword = () => {
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [passwordMatch, setPasswordMatch] = useState(true);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
 
     const handleTogglePassword1Visibility = () => {
         setShowPassword1(!showPassword1);
@@ -16,20 +24,43 @@ const ResetPassword = () => {
         setShowPassword2(!showPassword2);
     };
 
-    const handleSubmit = () => {
+    const resetPassword = async (email: string, newPassword: string): Promise<void> => {
+        const usersRef = collection(firestore, 'users');
+        const q = query(usersRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0];
+            const userId = userDoc.id;
+
+            // Cập nhật mật khẩu trong cơ sở dữ liệu hoặc thực hiện hành động khác để đặt lại mật khẩu
+            await updateDoc(doc(usersRef, userId), { password: newPassword });
+        } else {
+            throw new Error('Email không tồn tại');
+        }
+    };
+
+    const handleSubmit = async () => {
         if (password1 !== password2) {
             setPasswordMatch(false);
             return;
         }
+        try {
+            if (email) {
+                await resetPassword(email, password1);
+            }
+            toast.success('Đổi mật khẩu thành công !');
+            navigate('/login');
+        } catch (error) {
+            toast.error('Đổi mật khẩu thất bại !');
+        }
 
-        // Tiếp tục xử lý khi mật khẩu trùng khớp
-        // ...
     };
 
     return (
         <>
             <div className='flex full-size'>
-                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
+                <div className='w-1/2 text-2xl bg-gray-100 h-screen absolute-center flex-col'>
                     <img
                         className='w-[250px] my-12 h-fit'
                         src='/logo.png'
@@ -101,6 +132,13 @@ const ResetPassword = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+                <div className='w-1/2 text-2xl h-screen overflow-hidden absolute-center'>
+                    <img
+                        className='w-fit h-[600px]'
+                        src='/Frame.png'
+                        alt=''
+                    />
                 </div>
             </div>
         </>

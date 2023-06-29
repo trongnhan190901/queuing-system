@@ -4,12 +4,13 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from 'server/firebase'; // Thay đổi import này nếu cần
 
 const ForgotPassword = () => {
-    const [backupEmail, setBackupEmail] = useState('');
+    const [email, setEmail] = useState('');
     const [emailExists, setEmailExists] = useState(true);
     const [submitClicked, setSubmitClicked] = useState(false);
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,7 +19,7 @@ const ForgotPassword = () => {
         try {
             const q = query(
                 collection(firestore, 'users'),
-                where('backupEmail', '==', backupEmail),
+                where('email', '==', email),
             );
             const userQuery = await getDocs(q);
 
@@ -29,7 +30,7 @@ const ForgotPassword = () => {
             }
 
             console.log('Email exists');
-            navigate('/reset-password');
+            navigate(`/reset-password?email=${encodeURIComponent(email)}`);
 
             // Tiếp tục xử lý reset mật khẩu ở đây
         } catch (error) {
@@ -42,9 +43,9 @@ const ForgotPassword = () => {
     return (
         <>
             <div className='flex full-size'>
-                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
+                <div className='w-1/2 text-2xl bg-gray-100 h-screen absolute-center flex-col'>
                     <img
-                        className='w-[250px] my-12 h-fit'
+                        className='w-[250px] mb-40 h-fit'
                         src='/logo.png'
                         alt=''
                     />
@@ -63,12 +64,12 @@ const ForgotPassword = () => {
                             </label>
                             <input
                                 type='text'
-                                value={backupEmail}
+                                value={email}
                                 className={`w-[400px] mt-2 focus:outline-none h-[40px] border rounded-xl px-6 ${
                                     emailExists ? '' : 'border-red-500'
                                 }`}
                                 onChange={(e) => {
-                                    setBackupEmail(e.target.value);
+                                    setEmail(e.target.value);
                                     setEmailExists(true);
                                     setError('');
                                 }}
@@ -86,7 +87,7 @@ const ForgotPassword = () => {
                         </div>
                         <div className='w-full mt-4 justify-center flex space-x-6'>
                             <Link to={'/login'}>
-                                <button className='mt-6 w-[150px] rounded-xl h-[40px] bg-white border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white'>
+                                <button className='mt-6 w-[150px] rounded-xl h-[40px] bg-transparent border border-orange-alta text-orange-alta hover: font-secondary font-bold hover:bg-orange-alta hover:text-white'>
                                     Hủy
                                 </button>
                             </Link>
@@ -99,6 +100,13 @@ const ForgotPassword = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+                <div className='w-1/2 text-2xl h-screen overflow-hidden absolute-center'>
+                    <img
+                        className='w-fit h-[600px]'
+                        src='/Frame.png'
+                        alt=''
+                    />
                 </div>
             </div>
         </>

@@ -21,18 +21,30 @@ const LoginPage = () => {
         try {
             const resultAction = await dispatch(login({ username, password }) as any);
             if (resultAction.payload) {
-                // Đăng nhập thành công
-                const user = resultAction.payload;
-                console.log(user);
 
-                // Kiểm tra trạng thái active của người dùng
-                if (!user.active) {
-                    // Người dùng không hoạt động, hiển thị thông báo hoặc xử lý tương ứng
+                const { user, device } = resultAction.payload;
+                console.log(user);
+                console.log(device);
+
+                if (user && !user.active) {
+                    // Người dùng không hoạt động
                     setError('Tài khoản của bạn đã bị vô hiệu hóa');
                     return;
                 }
+                if (device && !device.active) {
+                    // Thiết bị không hoạt động
+                    setError('Thiết bị không hoạt động');
+                    return;
+                }
 
-                navigate('/');
+                if (user) {
+                    // Đăng nhập thành công cho người dùng, chuyển hướng đến trang người dùng
+                    navigate('/');
+                } else if (device) {
+                    // Đăng nhập thành công cho thiết bị, chuyển hướng đến trang thiết bị
+                    const { deviceCode } = device;
+                    navigate(`/device/${deviceCode}`);
+                }
             } else {
                 // Đăng nhập thất bại
                 setError('Sai mật khẩu hoặc tên đăng nhập');
@@ -53,9 +65,9 @@ const LoginPage = () => {
                 {isLoading &&
                     <Loading />
                 };
-                <div className='w-1/2 text-2xl pb-24 h-full mt-56 absolute-center flex-col'>
+                <div className='w-1/2 text-2xl bg-gray-100 h-screen absolute-center flex-col'>
                     <img
-                        className='w-[250px] my-12 h-fit'
+                        className='w-[250px] mb-40 h-fit'
                         src='/logo.png'
                         alt=''
                     />
@@ -120,6 +132,17 @@ const LoginPage = () => {
                             </Link>
                         </div>
                     </form>
+                </div>
+                <div className='w-1/2 relative text-2xl h-screen overflow-hidden absolute-center'>
+                    <img
+                        className='w-fit h-[650px]'
+                        src='/loginIMG.png'
+                        alt=''
+                    />
+                    <div className='absolute right-20 font-primary text-orange-alta'>
+                        <div className='text-6xl font-medium'>Hệ thống</div>
+                        <div className='text-7xl font-bold'>Quản lý xếp hàng</div>
+                    </div>
                 </div>
             </div>
         </>

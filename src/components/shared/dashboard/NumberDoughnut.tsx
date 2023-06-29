@@ -43,8 +43,6 @@ const NumberDoughnut = ({ date }: { date: string }) => {
                 const totalNumbers = filteredNumbersData.length;
                 setTotalNumber(totalNumbers);
                 valueRef.current = (totalUsed / totalNumbers) * 100;
-
-
                 setIsDataFetched(true);
             } catch (error) {
                 console.log('Lỗi khi tải thông tin số:', error);
@@ -91,7 +89,7 @@ const NumberDoughnut = ({ date }: { date: string }) => {
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
+
             const valueToShow = isNaN(valueRef.current) ? 0 : valueRef.current.toFixed(0);
             ctx.fillText(
                 valueToShow + '%',

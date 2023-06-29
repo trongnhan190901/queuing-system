@@ -70,8 +70,9 @@ const ServiceDoughnut = () => {
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            const valueToShow = isNaN(value) ? 0 : value.toFixed(0);
             ctx.fillText(
-                value.toFixed(0) + '%',
+                valueToShow + '%',
                 chart.getDatasetMeta(0).data[0].x,
                 chart.getDatasetMeta(0).data[0].y,
             );

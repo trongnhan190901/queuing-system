@@ -44,6 +44,7 @@ const DashboardContainer = () => {
                                 <Calendar
                                     onChange={onChange}
                                     value={value}
+                                    selectRange={false}
                                 />
                             </div>
                         </div>

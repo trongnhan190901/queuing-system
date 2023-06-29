@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useRef, useState } from 'react';
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { firestore } from 'server/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { Account } from 'types';
 import Loading from 'components/loading/Loading';
 import ReactPaginate from 'react-paginate';
 import { dateFormat3 } from '../../../../helper/dateFormat';
+import { Listbox, Transition } from '@headlessui/react';
+import Calendar from 'react-calendar';
 
 const LogContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +33,38 @@ const LogContainer = () => {
         };
 
         fetchAccounts();
+    }, []);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(new Date());
+    const calendarRef = useRef<HTMLDivElement>(null);
+
+    const handleToggleCalendar = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleDateChange = (date: Date | Date[]) => {
+        if (Array.isArray(date)) {
+            setSelectedStartDate(date[0]);
+            setSelectedEndDate(date[1]);
+        } else {
+            setSelectedStartDate(date);
+            setSelectedEndDate(null);
+        }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,6 +94,15 @@ const LogContainer = () => {
                 account.logs.includes(searchTerm)
 
             );
+        })
+        .filter((account) => {
+            // Lọc theo startDate và endDate
+            if (selectedStartDate && selectedEndDate) {
+                // @ts-ignore
+                const accountCreatedAt = account.updateTime.toDate(); // Chuyển đổi timestamp thành đối tượng Date
+                return accountCreatedAt >= selectedStartDate && accountCreatedAt <= selectedEndDate;
+            }
+            return true;
         })
         .slice(pagesVisited, pagesVisited + numbersPerPage)
         .map((account, index, array) => {
@@ -117,7 +160,7 @@ const LogContainer = () => {
 
                 <>
                     <div className='flex full-size flex-col'>
-                        <div className='h-32 mx-12 flex items-center'>
+                        <div className='h-32 mx-12 flex items-center mt-8'>
                             <div className='text-gray-500 text-3xl font-bold font-primary'>
                                 Cài đặt hệ thống
                             </div>
@@ -127,7 +170,90 @@ const LogContainer = () => {
                             </div>
                         </div>
 
-                        <div className='flex ml-12 mr-64 mb-12'>
+                        <div className='flex ml-12 mr-64 mt-12 mb-12'>
+                            <div className='flex'>
+                                <div className='w-[360px] z-20 flex flex-col'>
+                                    <div className='text-3xl'>Chọn thời gian</div>
+                                    <div className='flex space-x-4'>
+                                        <div className='flex'>
+                                            <div className='flex flex-col'>
+                                                <Listbox>
+                                                    {({ open }) => (
+                                                        <>
+                                                            <Listbox.Button
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    open ? 'ring-2 ring-orange-100' : ''
+                                                                }`}
+                                                                onClick={handleToggleCalendar}
+                                                            >
+                                                                <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
+                                                                <span className='block text-3xl text-gray-600 truncate'>
+                                                      {selectedStartDate ? selectedStartDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
+                                                    </span>
+                                                            </Listbox.Button>
+                                                            <Transition
+                                                                show={isOpen}
+                                                                enter='transition ease-out duration-100'
+                                                                enterFrom='transform opacity-0 scale-95'
+                                                                enterTo='transform opacity-100 scale-100'
+                                                                leave='transition ease-in duration-75'
+                                                                leaveFrom='transform opacity-100 scale-100'
+                                                                leaveTo='transform opacity-0 scale-95'
+                                                            >
+                                                                <div
+                                                                    className='absolute mt-1 w-[400px] bg-white border border-gray-300 rounded-xl shadow-lg h-[385px] overflow-auto focus:outline-none sm:text-sm'
+                                                                    ref={calendarRef}
+                                                                >
+                                                                    <Calendar
+                                                                        // @ts-ignore
+                                                                        onChange={(date: Date | Date[]) => handleDateChange(date)}
+                                                                        value={selectedStartDate && selectedEndDate ? [selectedStartDate, selectedEndDate] : new Date()}
+                                                                        selectRange={true}
+                                                                        className='p-3'
+                                                                    />
+                                                                </div>
+                                                            </Transition>
+                                                        </>
+                                                    )}
+                                                </Listbox>
+                                            </div>
+                                            <div className='absolute-center mx-2 h-full'>
+                                                <ChevronRightIcon className='h-8 w-8 mt-4 stroke-gray-500' />
+                                            </div>
+                                            <div className='flex flex-col'>
+                                                <Listbox>
+                                                    {({ open }) => (
+                                                        <>
+                                                            <Listbox.Button
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    open ? 'ring-2 ring-orange-100' : ''
+                                                                }`}
+                                                                onClick={handleToggleCalendar}
+                                                            >
+                                                                <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
+                                                                <span className='block text-3xl text-gray-600 truncate'>
+                                                    {selectedEndDate instanceof Date ? selectedEndDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
+                                                </span>
+                                                            </Listbox.Button>
+                                                            <Transition
+                                                                show={isOpen}
+                                                                enter='transition ease-out duration-100'
+                                                                enterFrom='transform opacity-0 scale-95'
+                                                                enterTo='transform opacity-100 scale-100'
+                                                                leave='transition ease-in duration-75'
+                                                                leaveFrom='transform opacity-100 scale-100'
+                                                                leaveTo='transform opacity-0 scale-95'
+                                                            >
+
+                                                            </Transition>
+                                                        </>
+                                                    )}
+                                                </Listbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div className='flex w-full mr-2 justify-end'>
                                 <div className='w-[300px] '>
                                     <div className='text-3xl'>Từ khóa</div>

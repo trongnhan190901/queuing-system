@@ -3,7 +3,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { useState } from 'react';
 import DeviceContainer from './DeviceContainer';
 import { firestore } from 'server/firebase';
-import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import Loading from 'components/loading/Loading';
 import { useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ const AddDevice = () => {
     const [serviceUse, setServiceUse] = useState('');
 
     const user = useSelector((state: RootState) => state.auth.user);
+    const uniqueUsernamesRef = collection(firestore, 'uniqueUsernames');
 
     const handleFormSubmit = async () => {
         setIsSubmitted(true);
@@ -50,6 +51,17 @@ const AddDevice = () => {
                     connect: true,
                     createdAt: serverTimestamp(),
                 });
+
+                const usernameQuerySnapshot = await getDocs(query(uniqueUsernamesRef, where('name', '==', username)));
+                const existingUser = !usernameQuerySnapshot.empty;
+
+                if (existingUser) {
+                    toast.error('Tên tài khoản đã tồn tại');
+                    setIsLoading(false);
+                    return;
+                }
+
+                await addDoc(uniqueUsernamesRef, { name: username });
 
                 const userId = user?.id;
                 // @ts-ignore
@@ -350,7 +362,7 @@ const AddDevice = () => {
                                             </span>
                                         </label>
                                         <input
-                                            placeholder='Nhập mật khẩu'
+                                            placeholder='Nhập dịch vụ sử dụng'
                                             type='text'
                                             className={`w-[98%] focus:outline-none h-[40px] border-gray-300 border rounded-xl px-6 ${
                                                 isSubmitted && !password

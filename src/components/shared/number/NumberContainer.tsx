@@ -1,4 +1,5 @@
 import {
+    CalendarDaysIcon,
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -6,7 +7,7 @@ import {
     MagnifyingGlassIcon,
     PlusIcon,
 } from '@heroicons/react/24/outline';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AddNumber from './AddNumber';
 import { NumberType } from '../../../types';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
@@ -16,6 +17,7 @@ import NumberDetail from './NumberDetail';
 import ReactPaginate from 'react-paginate';
 import Loading from '../../loading/Loading';
 import { Listbox, Transition } from '@headlessui/react';
+import Calendar from 'react-calendar';
 
 const NumberContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -91,6 +93,38 @@ const NumberContainer = () => {
         }
     };
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(new Date());
+    const calendarRef = useRef<HTMLDivElement>(null);
+
+    const handleToggleCalendar = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleDateChange = (date: Date | Date[]) => {
+        if (Array.isArray(date)) {
+            setSelectedStartDate(date[0]);
+            setSelectedEndDate(date[1]);
+        } else {
+            setSelectedStartDate(date);
+            setSelectedEndDate(null);
+        }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const [pageNumber, setPageNumber] = useState(0);
 
     const numbersPerPage = 9;
@@ -139,6 +173,15 @@ const NumberContainer = () => {
                 number.fullName?.toLowerCase().includes(searchTerm) ||
                 number.fullName?.includes(searchTerm)
             );
+        })
+        .filter((number) => {
+            // Lọc theo startDate và endDate
+            if (selectedStartDate && selectedEndDate) {
+                // @ts-ignore
+                const numberCreatedAt = number.createdAt.toDate(); // Chuyển đổi timestamp thành đối tượng Date
+                return numberCreatedAt >= selectedStartDate && numberCreatedAt <= selectedEndDate;
+            }
+            return true;
         })
         .slice(pagesVisited, pagesVisited + numbersPerPage)
         .map((number, index, array) => {
@@ -324,7 +367,7 @@ const NumberContainer = () => {
                                 </Listbox>
                             </div>
 
-                            <div className='w-[200px] ml-10 z-20'>
+                            <div className='w-[200px] ml-8 z-20'>
                                 <div className='text-3xl'>Trạng thái</div>
                                 <Listbox
                                     value={selectedStatus}
@@ -401,7 +444,7 @@ const NumberContainer = () => {
                                 </Listbox>
                             </div>
 
-                            <div className='w-[200px] ml-10 z-20'>
+                            <div className='w-[200px] ml-8 z-20'>
                                 <div className='text-3xl'>Nguồn cấp</div>
                                 <Listbox
                                     value={selectedSource}
@@ -476,163 +519,92 @@ const NumberContainer = () => {
                                         </>
                                     )}
                                 </Listbox>
-
-                                {/*    <div className='w-[400px] ml-10 z-20 flex flex-col'>*/}
-                                {/*        <div className='text-3xl'>Chọn thời gian</div>*/}
-                                {/*        <div className='flex space-x-4'>*/}
-                                {/*            {' '}*/}
-                                {/*            <Listbox*/}
-                                {/*                value={selectedOption}*/}
-                                {/*                onChange={setSelectedOption}*/}
-                                {/*            >*/}
-                                {/*                {({ open }) => (*/}
-                                {/*                    <>*/}
-                                {/*                        <Listbox.Button*/}
-                                {/*                            className='relative mt-4 rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm'*/}
-                                {/*                            onClick={() => setIsOpen(!isOpen)}*/}
-                                {/*                        >*/}
-                                {/*                    <span className='block text-3xl truncate'>*/}
-                                {/*                        {selectedOption}*/}
-                                {/*                    </span>*/}
-                                {/*                            <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>*/}
-                                {/*                        <ChevronDownIcon className='w-8 h-8 stroke-2 stroke-orange-500' />*/}
-                                {/*                    </span>*/}
-                                {/*                        </Listbox.Button>*/}
-                                {/*                        <Transition*/}
-                                {/*                            show={open}*/}
-                                {/*                            enter='transition ease-out duration-100'*/}
-                                {/*                            enterFrom='transform opacity-0 scale-95'*/}
-                                {/*                            enterTo='transform opacity-100 scale-100'*/}
-                                {/*                            leave='transition ease-in duration-75'*/}
-                                {/*                            leaveFrom='transform opacity-100 scale-100'*/}
-                                {/*                            leaveTo='transform opacity-0 scale-95'*/}
-                                {/*                        >*/}
-                                {/*                            <Listbox.Options*/}
-                                {/*                                static*/}
-                                {/*                                className='absolute mt-1 w-[180px] text-3xl bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'*/}
-                                {/*                            >*/}
-                                {/*                                {options.map((option) => (*/}
-                                {/*                                    <Listbox.Option*/}
-                                {/*                                        key={option}*/}
-                                {/*                                        value={option}*/}
-                                {/*                                    >*/}
-                                {/*                                        {({*/}
-                                {/*                                              active,*/}
-                                {/*                                              selected,*/}
-                                {/*                                          }) => (*/}
-                                {/*                                            <div*/}
-                                {/*                                                className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${*/}
-                                {/*                                                    active*/}
-                                {/*                                                        ? 'bg-orange-100 text-black'*/}
-                                {/*                                                        : ''*/}
-                                {/*                                                }`}*/}
-                                {/*                                            >*/}
-                                {/*                                        <span*/}
-                                {/*                                            className={`block text-2xl truncate ${*/}
-                                {/*                                                selected*/}
-                                {/*                                                    ? 'font-medium'*/}
-                                {/*                                                    : 'font-normal'*/}
-                                {/*                                            }`}*/}
-                                {/*                                        >*/}
-                                {/*                                            {option}*/}
-                                {/*                                        </span>*/}
-                                {/*                                            </div>*/}
-                                {/*                                        )}*/}
-                                {/*                                    </Listbox.Option>*/}
-                                {/*                                ))}*/}
-                                {/*                            </Listbox.Options>*/}
-                                {/*                        </Transition>*/}
-                                {/*                    </>*/}
-                                {/*                )}*/}
-                                {/*            </Listbox>*/}
-                                {/*            <div className='absolute-center h-full'>*/}
-                                {/*                <ChevronRightIcon className='h-8 w-8 mt-4 stroke-gray-500' />*/}
-                                {/*            </div>*/}
-                                {/*            <div className='flex w-full justify-center'>*/}
-                                {/*                <div className='w-[400px] z-20'>*/}
-                                {/*                    <Listbox*/}
-                                {/*                        value={serviceSelect}*/}
-                                {/*                        onChange={(value) => {*/}
-                                {/*                            setServiceSelect(value);*/}
-                                {/*                            setServiceOpen(false);*/}
-                                {/*                        }}*/}
-                                {/*                    >*/}
-                                {/*                        {({ open }) => (*/}
-                                {/*                            <>*/}
-                                {/*                                <Listbox.Button*/}
-                                {/*                                    className={`relative mt-4 rounded-xl w-full bg-white border-2 ${*/}
-                                {/*                                        displayRedBorder ? 'border-red-500' : 'border-gray-300'*/}
-                                {/*                                    } shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${*/}
-                                {/*                                        serviceOpen ? 'ring-orange-200 ring-2' : ''*/}
-                                {/*                                    }`}*/}
-                                {/*                                    onClick={() => setServiceOpen(!serviceOpen)}*/}
-                                {/*                                >*/}
-                                {/*<span*/}
-                                {/*    className={`text-[16px] py-2 h-full flex items-center ${*/}
-                                {/*        serviceSelect*/}
-                                {/*            ? 'text-black'*/}
-                                {/*            : isSubmitted*/}
-                                {/*                ? 'text-gray-500'*/}
-                                {/*                : 'text-gray-500'*/}
-                                {/*    }`}*/}
-                                {/*>*/}
-                                {/*  {serviceSelect || 'Chọn dịch vụ'}*/}
-                                {/*</span>*/}
-                                {/*                                    <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>*/}
-                                {/*  {serviceOpen ? (*/}
-                                {/*      <ChevronUpIcon className='w-8 h-8 stroke-2 stroke-orange-alta' />*/}
-                                {/*  ) : (*/}
-                                {/*      <ChevronDownIcon className='w-8 h-8 stroke-2 stroke-orange-alta' />*/}
-                                {/*  )}*/}
-                                {/*</span>*/}
-                                {/*                                </Listbox.Button>*/}
-                                {/*                                <Transition*/}
-                                {/*                                    show={open}*/}
-                                {/*                                    enter='transition ease-out duration-100'*/}
-                                {/*                                    enterFrom='transform opacity-0 scale-95'*/}
-                                {/*                                    enterTo='transform opacity-100 scale-100'*/}
-                                {/*                                    leave='transition ease-in duration-75'*/}
-                                {/*                                    leaveFrom='transform opacity-100 scale-100'*/}
-                                {/*                                    leaveTo='transform opacity-0 scale-95'*/}
-                                {/*                                >*/}
-                                {/*                                    <Listbox.Options*/}
-                                {/*                                        static*/}
-                                {/*                                        className='absolute mt-[1px] max-h-56 z-20 w-full text-3xl bg-white border border-gray-300 rounded-2xl shadow-lg overflow-auto focus:outline-none sm:text-sm'*/}
-                                {/*                                    >*/}
-                                {/*                                        {services.map((option) => (*/}
-                                {/*                                            <Listbox.Option*/}
-                                {/*                                                key={option}*/}
-                                {/*                                                value={option}*/}
-                                {/*                                            >*/}
-                                {/*                                                {({ active, selected }) => (*/}
-                                {/*                                                    <div*/}
-                                {/*                                                        className={`cursor-default text-[16px] select-none relative py-3 pl-3 pr-9 ${*/}
-                                {/*                                                            active ? 'bg-orange-100 text-black' : ''*/}
-                                {/*                                                        }`}*/}
-                                {/*                                                    >*/}
-                                {/*          <span*/}
-                                {/*              className={`block text-[16px] py-3 truncate ${*/}
-                                {/*                  selected ? 'font-medium' : 'font-normal'*/}
-                                {/*              }`}*/}
-                                {/*          >*/}
-                                {/*            {option}*/}
-                                {/*          </span>*/}
-                                {/*                                                    </div>*/}
-                                {/*                                                )}*/}
-                                {/*                                            </Listbox.Option>*/}
-                                {/*                                        ))}*/}
-                                {/*                                    </Listbox.Options>*/}
-                                {/*                                </Transition>*/}
-                                {/*                            </>*/}
-                                {/*                        )}*/}
-                                {/*                    </Listbox>*/}
-                                {/*                </div>*/}
-                                {/*            </div>*/}
-                                {/*        </div>*/}
                             </div>
+                            <div className='flex'>
+                                <div className='w-[360px] ml-10 z-20 flex flex-col'>
+                                    <div className='text-3xl'>Chọn thời gian</div>
+                                    <div className='flex space-x-4'>
+                                        <div className='flex'>
+                                            <div className='flex flex-col'>
+                                                <Listbox>
+                                                    {({ open }) => (
+                                                        <>
+                                                            <Listbox.Button
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    open ? 'ring-2 ring-orange-100' : ''
+                                                                }`}
+                                                                onClick={handleToggleCalendar}
+                                                            >
+                                                                <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
+                                                                <span className='block text-3xl text-gray-600 truncate'>
+                                                      {selectedStartDate ? selectedStartDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
+                                                    </span>
+                                                            </Listbox.Button>
+                                                            <Transition
+                                                                show={isOpen}
+                                                                enter='transition ease-out duration-100'
+                                                                enterFrom='transform opacity-0 scale-95'
+                                                                enterTo='transform opacity-100 scale-100'
+                                                                leave='transition ease-in duration-75'
+                                                                leaveFrom='transform opacity-100 scale-100'
+                                                                leaveTo='transform opacity-0 scale-95'
+                                                            >
+                                                                <div
+                                                                    className='absolute mt-1 w-[400px] bg-white border border-gray-300 rounded-xl shadow-lg h-[385px] overflow-auto focus:outline-none sm:text-sm'
+                                                                    ref={calendarRef}
+                                                                >
+                                                                    <Calendar
+                                                                        // @ts-ignore
+                                                                        onChange={(date: Date | Date[]) => handleDateChange(date)}
+                                                                        value={selectedStartDate && selectedEndDate ? [selectedStartDate, selectedEndDate] : new Date()}
+                                                                        selectRange={true}
+                                                                        className='p-3'
+                                                                    />
+                                                                </div>
+                                                            </Transition>
+                                                        </>
+                                                    )}
+                                                </Listbox>
+                                            </div>
+                                            <div className='absolute-center mx-2 h-full'>
+                                                <ChevronRightIcon className='h-8 w-8 mt-4 stroke-gray-500' />
+                                            </div>
+                                            <div className='flex flex-col'>
+                                                <Listbox>
+                                                    {({ open }) => (
+                                                        <>
+                                                            <Listbox.Button
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    open ? 'ring-2 ring-orange-100' : ''
+                                                                }`}
+                                                                onClick={handleToggleCalendar}
+                                                            >
+                                                                <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
+                                                                <span className='block text-3xl text-gray-600 truncate'>
+                                                    {selectedEndDate instanceof Date ? selectedEndDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
+                                                </span>
+                                                            </Listbox.Button>
+                                                            <Transition
+                                                                show={isOpen}
+                                                                enter='transition ease-out duration-100'
+                                                                enterFrom='transform opacity-0 scale-95'
+                                                                enterTo='transform opacity-100 scale-100'
+                                                                leave='transition ease-in duration-75'
+                                                                leaveFrom='transform opacity-100 scale-100'
+                                                                leaveTo='transform opacity-0 scale-95'
+                                                            >
 
-                            <div className='flex  mr-2 justify-end'>
-                                <div className='w-[300px] ml-[430px]'>
+                                                            </Transition>
+                                                        </>
+                                                    )}
+                                                </Listbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex mr-2 justify-end'>
+                                <div className='w-[300px] ml-28'>
                                     <div className='text-3xl'>Từ khóa</div>
                                     <div className='h-16 relative'>
                                         <input

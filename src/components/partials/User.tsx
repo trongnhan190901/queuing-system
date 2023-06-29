@@ -84,21 +84,28 @@ const User = ({ onClick }: UserProps) => {
                         <div className='h-20 rounded-tl-2xl rounded-tr-2xl text-white flex items-center px-5 bg-orange-alta text-[20px] font-primary font-bold'>
                             Thông báo
                         </div>
-                        <div className='max-h-[350px] w-full overflow-y-scroll overflow-x-hidden '>
-                            {numbers?.map((number, index) => (
-                                <div
-                                    key={index}
-                                    className='w-full h-32 flex justify-center flex-col pb-2 ml-6 mr-3 my-2 border-b border-gray-300'
-                                >
-                                    <div className='text-[18px] my-1 font-primary font-semibold text-orange-800'>
-                                        Người dùng: {number.fullName}
+                        <div className='max-h-[350px] h-[350px] rounded-bl-2xl rounded-br-2xl z-20 w-full overflow-y-scroll bg-white overflow-x-hidden '>
+                            {numbers?.length > 0 ? (
+                                numbers.map((number, index) => (
+                                    <div
+                                        key={index}
+                                        className='w-full h-32 flex justify-center flex-col pb-2 ml-6 mr-3 my-2 border-b border-gray-300'
+                                    >
+                                        <div className='text-[18px] my-1 font-primary font-semibold text-orange-800'>
+                                            Người dùng: {number.fullName}
+                                        </div>
+                                        <div className='text-[16px] text-gray-600 font-primary font-medium'>
+                                            {/*// @ts-ignore*/}
+                                            Thời gian nhận số: {dateFormat4(number.createdAt.toDate().toISOString())}
+                                        </div>
                                     </div>
-                                    <div className='text-[16px] text-gray-600 font-primary font-medium'>
-                                        {/*// @ts-ignore*/}
-                                        Thời gian nhận số: {dateFormat4(number.createdAt.toDate().toISOString())}
-                                    </div>
+                                ))
+                            ) : (
+                                <div className='text-[18px] full-size absolute-center text-gray-600 font-primary font-medium'>
+                                    Không có thông báo
                                 </div>
-                            ))}
+                            )}
+
                         </div>
                     </div>
                 </div>

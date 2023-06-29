@@ -106,6 +106,7 @@ abbr {
 .react-calendar__tile {
     width: 50px !important;
     height: 50px !important;
+    border-radius: 8px !important;
 }
 
 .react-calendar__tile--active {
@@ -134,6 +135,11 @@ abbr {
     border-radius: 6px;
     font-weight: bold;
     color: #ff6722;
+}
+
+.react-calendar__tile--hasActive {
+    background-color: #ff6722 !important;
+    color: white;
 }
 
 .react-calendar__tile--now:enabled:hover,
@@ -167,27 +173,24 @@ abbr {
 }
 
 .react-calendar__tile--range {
-    background: #f8f8fa;
-    color: #ff6722;
-    border-radius: 0;
+    background-color: #FFCC80 !important;
+    color: black !important;
+    border-radius: 0 !important;
+    font-weight: 400 !important;
 }
 
 .react-calendar__tile--rangeStart {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-    background: #ff6722;
-    color: white;
+    border-radius: 6px !important;
+    background-color: #ff6722 !important;
+    font-weight: 600 !important;
+    color: white !important;
 }
 
 .react-calendar__tile--rangeEnd {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
-    background: #ff6722;
-    color: white;
+    border-radius: 6px !important;
+    background-color: #ff6722 !important;
+    font-weight: 600 !important;
+    color: white !important;
 }
 
 .react-calendar__navigation {
