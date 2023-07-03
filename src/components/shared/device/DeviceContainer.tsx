@@ -110,7 +110,10 @@ const DeviceContainer = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
 
-    const handleToggleExpand = (index: number) => {
+    const expandRef = useRef(null);
+
+    const handleToggleExpand = (event: React.MouseEvent, index: number) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click từ lan truyền lên các phần tử cha
         if (expandedIndex === index) {
             setExpandedIndex(-1);
         } else {
@@ -118,16 +121,13 @@ const DeviceContainer = () => {
         }
     };
 
-    const [isExpanded, setIsExpanded] = useState(false);
-    const expandRef = useRef(null);
+    const handleClickOutside = (event: MouseEvent) => {
+        if (expandRef.current && !(expandRef.current as HTMLElement).contains(event.target as Node)) {
+            setExpandedIndex(-1);
+        }
+    };
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (expandRef.current && !(expandRef.current as HTMLElement).contains(event.target as Node)) {
-                setIsExpanded(false);
-            }
-        };
-
         document.addEventListener('click', handleClickOutside);
 
         return () => {
@@ -237,23 +237,25 @@ const DeviceContainer = () => {
                                     </div>
                                 )}
                             </th>
-                            <th className='border border-orange-200 py-2 pl-6 w-[350px] leading-snug font-thin text-start'>
+                            <th className='border border-orange-200 h-[65px] py-2 pl-6 w-[350px] leading-snug font-thin text-start'>
                                 <div
                                     ref={expandRef}
                                     className={`leading-normal ${
                                         isExpanded
-                                            ? 'w-[500px] absolute z-10 bg-white h-auto border-2 border-orange-alta rounded-2xl px-2'
+                                            ? 'w-[500px] absolute z-10 bg-white border-2 border-orange-alta rounded-2xl px-2'
                                             : 'line-clamp-1 w-[240px]'
                                     }`}
+                                    onClick={(event) => event.stopPropagation()} // Ngăn chặn sự kiện click từ lan truyền lên các phần tử cha
                                 >
                                     {device.serviceUse}
                                 </div>
                                 <div
-                                    onClick={() => handleToggleExpand(index)}
+                                    onClick={(event) => handleToggleExpand(event, index)}
                                     className='cursor-pointer underline-offset-4 hover:no-underline underline text-blue-500'
                                 >
                                     {expandedIndex === index ? 'Thu gọn' : 'Xem thêm'}
                                 </div>
+
                             </th>
                             <th
                                 onClick={() =>
