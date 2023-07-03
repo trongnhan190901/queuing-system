@@ -42,6 +42,8 @@ export const login = createAsyncThunk(
                 // Người dùng tồn tại trong collection "users"
                 const userDoc = usersQuerySnapshot.docs[0];
                 const user = { id: userDoc.id, ...userDoc.data() } as Account; // Thêm thuộc tính id vào đối tượng user
+
+
                 return { user };
             } else {
                 // Kiểm tra trong collection "devices"
@@ -57,6 +59,8 @@ export const login = createAsyncThunk(
                     // Thiết bị tồn tại trong collection "devices"
                     const deviceDoc = devicesQuerySnapshot.docs[0];
                     const device = { id: deviceDoc.id, ...deviceDoc.data() } as Device; // Tạo đối tượng device
+
+
                     return { device };
                 } else {
                     throw new Error('Đăng nhập không thành công');

@@ -16,6 +16,8 @@ import UpdateDevice from './UpdateDevice';
 import ReactPaginate from 'react-paginate';
 import { Device } from 'types';
 import Loading from 'components/loading/Loading';
+import Navbar from '../../partials/Navbar';
+import User from '../../partials/User';
 
 const DeviceContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -264,10 +266,15 @@ const DeviceContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-                {isParentVisible && (
-                    <>
+            {isLoading && <Loading />}
+            {showAddDevice && <AddDevice />}
+            {isParentVisible && (
+                <div className='full-size flex relative'>
+                    <Navbar />
+                    <div className='absolute top-2 right-2'>
+                        <User />
+                    </div>
+                    <div className='w-full h-screen bg-gray-200'>
                         <div className='flex full-size flex-col'>
                             <div className='h-32 mx-12 flex items-center'>
                                 <div className='text-gray-500 text-3xl font-bold font-primary'>
@@ -297,7 +304,7 @@ const DeviceContainer = () => {
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Button
-                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                         activeOpen
                                                             ? 'ring-orange-200 ring-2'
                                                             : ''
@@ -345,7 +352,7 @@ const DeviceContainer = () => {
                                                                           selected,
                                                                       }) => (
                                                                         <div
-                                                                            className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                            className={`cursor-pointer text-3xl select-none relative py-3 pl-3 pr-9 ${
                                                                                 active
                                                                                     ? 'bg-orange-100 text-black'
                                                                                     : ''
@@ -388,7 +395,7 @@ const DeviceContainer = () => {
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Button
-                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                         connectOpen
                                                             ? 'ring-orange-200 ring-2'
                                                             : ''
@@ -436,7 +443,7 @@ const DeviceContainer = () => {
                                                                           selected,
                                                                       }) => (
                                                                         <div
-                                                                            className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                            className={`cursor-pointer text-3xl select-none relative py-3 pl-3 pr-9 ${
                                                                                 active
                                                                                     ? 'bg-orange-100 text-black'
                                                                                     : ''
@@ -548,23 +555,21 @@ const DeviceContainer = () => {
                                 />
                             </div>
                         </div>
-                    </>
-                )}
-
-                {showAddDevice && <AddDevice />}
-                {showDetailDevice && (
-                    <DetailDevice
-                        deviceData={deviceData}
-                        deviceId={deviceId}
-                    />
-                )}
-                {showUpdateDevice && (
-                    <UpdateDevice
-                        deviceData={deviceData}
-                        deviceId={deviceId}
-                    />
-                )}
-            </div>
+                    </div>
+                </div>
+            )}
+            {showDetailDevice && (
+                <DetailDevice
+                    deviceData={deviceData}
+                    deviceId={deviceId}
+                />
+            )}
+            {showUpdateDevice && (
+                <UpdateDevice
+                    deviceData={deviceData}
+                    deviceId={deviceId}
+                />
+            )}
         </>
     );
 };

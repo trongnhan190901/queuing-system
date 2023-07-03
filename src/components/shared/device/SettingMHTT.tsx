@@ -1,7 +1,7 @@
 import { ArrowUpTrayIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Listbox, Transition } from '@headlessui/react';
 import { Cog8ToothIcon } from '@heroicons/react/24/solid';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
@@ -31,25 +31,38 @@ const SettingMHTT = () => {
 
     const [serviceOpen, setServiceOpen] = useState(false);
     const serviceCounter = ['Tất cả', 'Quầy dịch vụ số 1', 'Quầy dịch vụ số 2', 'Quầy dịch vụ số 3', 'Quầy dịch vụ số 4', 'Quầy dịch vụ số 5', 'Quầy dịch vụ số 6'];
-    const [selectedServiceCounter, setSelectedServiceCounter] = useState<string[]>([...serviceCounter]);
+
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (device && device.serviceUse) {
+            const selectedServices = serviceCounter;
+            setSelectedServices(selectedServices);
+            if (selectedServices.length === 6) {
+                if (!selectedServices.includes('Tất cả')) {
+                    setSelectedServices([...selectedServices, 'Tất cả']);
+                }
+            }
+        }
+    }, [device]);
 
     const handleServiceOptionChange = (option: string) => {
         let updatedSelections: string[];
 
         // Tạo một mảng phụ từ mảng selectedServices
-        const clonedSelectedServiceCounter = [...selectedServiceCounter];
+        const clonedSelectedServices = [...selectedServices];
 
         if (option === 'Tất cả') {
-            if (clonedSelectedServiceCounter.length === serviceCounter.length) {
+            if (clonedSelectedServices.length === serviceCounter.length) {
                 updatedSelections = [];
             } else {
-                updatedSelections = [...serviceCounter];
+                updatedSelections = serviceCounter;
             }
         } else {
-            if (clonedSelectedServiceCounter.includes(option)) {
-                updatedSelections = clonedSelectedServiceCounter.filter((selectedOption) => selectedOption !== option);
+            if (clonedSelectedServices.includes(option)) {
+                updatedSelections = clonedSelectedServices.filter((selectedOption) => selectedOption !== option);
             } else {
-                updatedSelections = [...clonedSelectedServiceCounter, option];
+                updatedSelections = [...clonedSelectedServices, option];
                 if (updatedSelections.length === serviceCounter.length - 1 && !updatedSelections.includes('Tất cả')) {
                     updatedSelections = ['Tất cả', ...updatedSelections];
                 }
@@ -60,10 +73,10 @@ const SettingMHTT = () => {
             }
         }
 
-        setSelectedServiceCounter(updatedSelections);
+        setSelectedServices(updatedSelections);
     };
 
-    const InfoSource = selectedServiceCounter
+    const InfoSource = selectedServices
         .filter(service => service !== 'Tất cả')
         .map((service, index) => (
             <span
@@ -123,7 +136,7 @@ const SettingMHTT = () => {
                                             {({ open }) => (
                                                 <>
                                                     <Listbox.Button
-                                                        className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                        className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                             isOpen
                                                                 ? 'ring-orange-200 ring-2'
                                                                 : ''
@@ -171,7 +184,7 @@ const SettingMHTT = () => {
                                                                               selected,
                                                                           }) => (
                                                                             <div
-                                                                                className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                                className={`cursor-pointer text-3xl select-none relative py-3 pl-3 pr-9 ${
                                                                                     active
                                                                                         ? 'bg-orange-100 text-black'
                                                                                         : ''
@@ -203,8 +216,7 @@ const SettingMHTT = () => {
                                         Số thứ tự hiển thị của dịch vụ
                                     </div>
                                     <Listbox
-                                        value={selectedServiceCounter}
-                                        onChange={setSelectedServiceCounter}
+                                        value={selectedServices}
                                     >
                                         {({ open }) => (
                                             <>
@@ -228,7 +240,6 @@ const SettingMHTT = () => {
                                                         static
                                                         className='absolute min-h-24 left-1/2 -translate-x-1/2 mt-8 w-[500px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-96 overflow-auto focus:outline-none sm:text-sm'
                                                     >
-
                                                         <Listbox.Option
                                                             value={'Tất cả'}
                                                         >
@@ -237,20 +248,20 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
+                                                                    onClick={() => handleServiceOptionChange('Tất cả')}
+                                                                    className={`cursor-pointer z-30 text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Tất cả')}
-                                                                            onChange={() => handleServiceOptionChange('Tất cả')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Tất cả')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Tất cả
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
+
                                                             )}
                                                         </Listbox.Option>
                                                         <Listbox.Option
@@ -261,23 +272,17 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 1')}
+                                                                    className={`cursor-pointer z-30 text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 1')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 1')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 1')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 1
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -289,23 +294,21 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 2')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 2')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 2')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 2')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 2
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -317,23 +320,21 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 3')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 3')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 3')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 3')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 3
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -345,23 +346,22 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 4')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 4')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 4')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 4')}
+
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 4
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -373,23 +373,24 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 5')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 5')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 5')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 5')}
+
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 5
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -401,23 +402,22 @@ const SettingMHTT = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Quầy dịch vụ số 6')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServiceCounter.includes('Quầy dịch vụ số 6')}
-                                                                            onChange={() => handleServiceOptionChange('Quầy dịch vụ số 6')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Quầy dịch vụ số 6')}
+
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Quầy dịch vụ số 6
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -446,7 +446,7 @@ const SettingMHTT = () => {
                     </button>
                 </div>
             )}
-            {showView && <ViewMHTT list={selectedServiceCounter} />}
+            {showView && <ViewMHTT list={selectedServices} />}
         </>
     );
 };

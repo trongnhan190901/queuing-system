@@ -18,6 +18,8 @@ import DetailService from './DetailService';
 import { Service } from 'types';
 import Loading from 'components/loading/Loading';
 import Calendar from 'react-calendar';
+import Navbar from '../../partials/Navbar';
+import User from '../../partials/User';
 
 const ServiceContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -272,10 +274,14 @@ const ServiceContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-                {isParentVisible && (
-                    <>
+            {isLoading && <Loading />}
+            {isParentVisible && (
+                <div className='full-size flex relative'>
+                    <Navbar />
+                    <div className='absolute top-2 right-2'>
+                        <User />
+                    </div>
+                    <div className='w-full h-screen bg-gray-200'>
                         <div className='flex full-size flex-col'>
                             <div className='h-32 mx-12 flex items-center'>
                                 <div className='text-gray-500 text-3xl font-bold font-primary'>
@@ -305,7 +311,7 @@ const ServiceContainer = () => {
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Button
-                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                         activeOpen
                                                             ? 'ring-orange-200 ring-2'
                                                             : ''
@@ -353,7 +359,7 @@ const ServiceContainer = () => {
                                                                           selected,
                                                                       }) => (
                                                                         <div
-                                                                            className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                            className={`cursor-pointer text-3xl select-none relative py-3 pl-3 pr-9 ${
                                                                                 active
                                                                                     ? 'bg-orange-100 text-black'
                                                                                     : ''
@@ -392,7 +398,7 @@ const ServiceContainer = () => {
                                                         {({ open }) => (
                                                             <>
                                                                 <Listbox.Button
-                                                                    className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                         open ? 'ring-2 ring-orange-100' : ''
                                                                     }`}
                                                                     onClick={handleToggleCalendar}
@@ -436,7 +442,7 @@ const ServiceContainer = () => {
                                                         {({ open }) => (
                                                             <>
                                                                 <Listbox.Button
-                                                                    className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                    className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                         open ? 'ring-2 ring-orange-100' : ''
                                                                     }`}
                                                                     onClick={handleToggleCalendar}
@@ -544,23 +550,22 @@ const ServiceContainer = () => {
                                 />
                             </div>
                         </div>
-                    </>
-                )}
-
-                {showAddService && <AddService />}
-                {showDetailService && (
-                    <DetailService
-                        serviceData={serviceData}
-                        serviceId={serviceId}
-                    />
-                )}
-                {showUpdateService && (
-                    <UpdateService
-                        serviceData={serviceData}
-                        serviceId={serviceId}
-                    />
-                )}
-            </div>
+                    </div>
+                </div>
+            )}
+            {showAddService && <AddService />}
+            {showDetailService && (
+                <DetailService
+                    serviceData={serviceData}
+                    serviceId={serviceId}
+                />
+            )}
+            {showUpdateService && (
+                <UpdateService
+                    serviceData={serviceData}
+                    serviceId={serviceId}
+                />
+            )}
         </>
     );
 };

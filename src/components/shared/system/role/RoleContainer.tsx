@@ -6,6 +6,8 @@ import AddRole from './AddRole';
 import UpdateRole from './UpdateRole';
 import { Role } from 'types';
 import Loading from 'components/loading/Loading';
+import Navbar from '../../../partials/Navbar';
+import User from '../../../partials/User';
 
 const RoleContainer = () => {
     const [isParentVisible, setIsParentVisible] = useState(true);
@@ -84,7 +86,7 @@ const RoleContainer = () => {
 
             const isLast = index === array.length - 1;
             const isMultipleOfNine = (index + 1) % 9 === 0;
-            
+
             const roundedRight = `${
                 isLast || isMultipleOfNine
                     ? 'rounded-br-3xl border-solid '
@@ -129,10 +131,14 @@ const RoleContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-                {isParentVisible && (
-                    <>
+            {isLoading && <Loading />}
+            {isParentVisible && (
+                <div className='full-size flex relative'>
+                    <Navbar />
+                    <div className='absolute top-2 right-2'>
+                        <User />
+                    </div>
+                    <div className='w-full h-screen bg-gray-200'>
                         <div className='flex full-size flex-col'>
                             <div className='h-32 mx-12 flex items-center'>
                                 <div className='text-gray-500 text-3xl font-bold font-primary'>
@@ -206,16 +212,16 @@ const RoleContainer = () => {
                                 </button>
                             </div>
                         </div>
-                    </>
-                )}
-                {showAddRole && <AddRole />}
-                {showUpdateRole && (
-                    <UpdateRole
-                        roleData={roleData}
-                        roleId={roleId}
-                    />
-                )}
-            </div>
+                    </div>
+                </div>
+            )}
+            {showAddRole && <AddRole />}
+            {showUpdateRole && (
+                <UpdateRole
+                    roleData={roleData}
+                    roleId={roleId}
+                />
+            )}
         </>
     );
 };

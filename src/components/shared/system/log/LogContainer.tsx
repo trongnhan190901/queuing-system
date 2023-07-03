@@ -8,6 +8,8 @@ import ReactPaginate from 'react-paginate';
 import { dateFormat3 } from '../../../../helper/dateFormat';
 import { Listbox, Transition } from '@headlessui/react';
 import Calendar from 'react-calendar';
+import Navbar from '../../../partials/Navbar';
+import User from '../../../partials/User';
 
 const LogContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -155,10 +157,13 @@ const LogContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-
-                <>
+            {isLoading && <Loading />}
+            <div className='full-size flex relative'>
+                <Navbar />
+                <div className='absolute top-2 right-2'>
+                    <User />
+                </div>
+                <div className='w-full h-screen bg-gray-200'>
                     <div className='flex full-size flex-col'>
                         <div className='h-32 mx-12 flex items-center mt-8'>
                             <div className='text-gray-500 text-3xl font-bold font-primary'>
@@ -181,7 +186,7 @@ const LogContainer = () => {
                                                     {({ open }) => (
                                                         <>
                                                             <Listbox.Button
-                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                     open ? 'ring-2 ring-orange-100' : ''
                                                                 }`}
                                                                 onClick={handleToggleCalendar}
@@ -225,7 +230,7 @@ const LogContainer = () => {
                                                     {({ open }) => (
                                                         <>
                                                             <Listbox.Button
-                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                     open ? 'ring-2 ring-orange-100' : ''
                                                                 }`}
                                                                 onClick={handleToggleCalendar}
@@ -317,8 +322,7 @@ const LogContainer = () => {
                             />
                         </div>
                     </div>
-                </>
-
+                </div>
             </div>
         </>
     );

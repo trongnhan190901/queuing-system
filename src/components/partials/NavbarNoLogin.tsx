@@ -8,7 +8,7 @@ const NavbarNoLogin = () => {
                 <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
                     <div className='flex justify-center w-full'>
                         <img
-                            className='w-[150px] my-12 h-fit'
+                            className='w-[100px] my-24 h-fit'
                             src='/logo.png'
                             alt=''
                         />

@@ -23,8 +23,6 @@ const LoginPage = () => {
             if (resultAction.payload) {
 
                 const { user, device } = resultAction.payload;
-                console.log(user);
-                console.log(device);
 
                 if (user && !user.active) {
                     // Người dùng không hoạt động
@@ -98,7 +96,7 @@ const LoginPage = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <div
-                                className='absolute top-16 right-2 transform -translate-y-1/2'
+                                className='absolute cursor-pointer top-16 right-2 transform -translate-y-1/2'
                                 onClick={handleTogglePasswordVisibility}
                             >
                                 {!showPassword ? (
@@ -135,7 +133,7 @@ const LoginPage = () => {
                 </div>
                 <div className='w-1/2 relative text-2xl h-screen overflow-hidden absolute-center'>
                     <img
-                        className='w-fit h-[650px]'
+                        className='w-fit h-[750px]'
                         src='/loginIMG.png'
                         alt=''
                     />

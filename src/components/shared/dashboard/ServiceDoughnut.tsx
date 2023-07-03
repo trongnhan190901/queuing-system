@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from '../../../server/firebase';
 import { Service } from '../../../types';
+import { Link } from 'react-router-dom';
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -89,7 +90,10 @@ const ServiceDoughnut = () => {
     return (
         <>
             <div className='w-full'>
-                <div className='w-[430px] h-[130px] rounded-3xl drop-shadow-xl shadow-xl absolute-center'>
+                <Link
+                    to='/services'
+                    className='w-[430px] h-[130px] rounded-3xl drop-shadow-xl shadow-xl absolute-center'
+                >
                     {isDataFetched && (
                         <>
                             <div className='w-32 h-32 mb-4'>
@@ -136,7 +140,7 @@ const ServiceDoughnut = () => {
                             </div>
                         </>
                     )}
-                </div>
+                </Link>
             </div>
         </>
     );

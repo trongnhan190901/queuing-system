@@ -8,38 +8,26 @@ import {
     Square3Stack3DIcon,
     Squares2X2Icon,
 } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DeviceContainer from '../shared/device/DeviceContainer';
-import NumberContainer from '../shared/number/NumberContainer';
-import ReportContainer from '../shared/report/ReportContainer';
-import ServiceContainer from '../shared/service/ServiceContainer';
-import DashboardContainer from '../shared/dashboard/DashboardContainer';
-import User from './User';
-import UserInfo from '../pages/UserInfo';
-import RoleContainer from '../shared/system/role/RoleContainer';
-import AccountContainer from '../shared/system/account/AccountContainer';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from 'store/authSlice';
-import LogContainer from '../shared/system/log/LogContainer';
+
 
 const Navbar = () => {
-    const [toggleSubMenu, setToggleSubMenu] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
-
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const [toggleSubMenu, setToggleSubMenu] = useState(false);
 
     const toggle = (show: boolean) => {
         setToggleSubMenu(show);
     };
 
-    const navigate = useNavigate();
-
-    const dispatch = useDispatch();
-
     const handleLogout = async () => {
         try {
             dispatch(logout());
-            navigate('/login');
+            // Navigate to the login page
         } catch (error) {
             console.log('Logout failed', error);
         }
@@ -49,108 +37,143 @@ const Navbar = () => {
         setSelectedIndex(index);
     };
 
+    useEffect(() => {
+        const currentPath = location.pathname;
+
+        if (currentPath === '/') {
+            setSelectedIndex(0);
+        } else if (currentPath === '/devices') {
+            setSelectedIndex(1);
+        } else if (currentPath === '/services') {
+            setSelectedIndex(2);
+        } else if (currentPath === '/numbers') {
+            setSelectedIndex(3);
+        } else if (currentPath === '/reports') {
+            setSelectedIndex(4);
+        } else if (currentPath === '/user') {
+            setSelectedIndex(5);
+        } else if (currentPath === '/roles') {
+            setSelectedIndex(6);
+        } else if (currentPath === '/accounts') {
+            setSelectedIndex(7);
+        } else if (currentPath === '/logs') {
+            setSelectedIndex(8);
+        }
+    }, [location.pathname]);
+
     return (
         <>
-            <div className='relative full-size flex z-20'>
-                <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
-                    <div className='flex justify-center w-full'>
-                        <img
-                            className='w-[150px] my-12 h-fit'
-                            src='/logo.png'
-                            alt=''
-                        />
-                    </div>
-                    <div className='flex w-[240px] flex-col space-y-4'>
-                        <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 0
-                                    ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
-                                    : 'text-gray-600 focus:outline-none'
-                            }`}
-                            onClick={() => handleTabChange(0)}
-                        >
-                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                                <Squares2X2Icon className='w-12 h-12 mr-4' />
-                                Dashboard
-                            </div>
+
+            <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
+                <Link
+                    to='/'
+                    className='flex justify-center w-full'
+                >
+                    <img
+                        className='w-[100px] my-24 h-fit'
+                        src='/logo.png'
+                        alt=''
+                    />
+                </Link>
+                <div className='flex w-[240px] flex-col space-y-4'>
+                    <Link
+                        to='/'
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 0
+                                ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                : 'text-gray-600 focus:outline-none'
+                        }`}
+                        onClick={() => handleTabChange(0)}
+                    >
+                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                            <Squares2X2Icon className='w-12 h-12 mr-4' />
+                            Dashboard
+                        </div>
+                    </Link>
+                    <Link
+                        to='/devices'
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 1
+                                ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                : 'text-gray-600 focus:outline-none'
+                        }`}
+                        onClick={() => handleTabChange(1)}
+                    >
+                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                            <ComputerDesktopIcon className='w-12 h-12 mr-4' />
+                            Thiết bị
+                        </div>
+                    </Link>
+                    <Link
+                        to='/services'
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 2
+                                ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                : 'text-gray-600 focus:outline-none'
+                        }`}
+                        onClick={() => handleTabChange(2)}
+                    >
+                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                            <ChatBubbleLeftRightIcon className='w-12 h-12 mr-4' />
+                            Dịch vụ
+                        </div>
+                    </Link>
+                    <Link
+                        to='/numbers'
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 3
+                                ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                : 'text-gray-600 focus:outline-none'
+                        }`}
+                        onClick={() => handleTabChange(3)}
+                    >
+                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                            <Square3Stack3DIcon className='w-12 h-12 mr-4' />
+                            Cấp số
+                        </div>
+                    </Link>
+                    <Link
+                        to='/reports'
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 4
+                                ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
+                                : 'text-gray-600 focus:outline-none'
+                        }`}
+                        onClick={() => handleTabChange(4)}
+                    >
+                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
+                            <DocumentChartBarIcon className='w-12 h-12 mr-4' />
+                            Báo cáo
+                        </div>
+                    </Link>
+
+                    <div
+                        className={`flex outline-0 text-3xl h-20 items-center ${
+                            selectedIndex === 6 ||
+                            selectedIndex === 7 ||
+                            selectedIndex === 8
+                                ? 'bg-orange-alta text-white focus:outline-none'
+                                : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
+                        }`}
+                    >
+                        <div className='full-size pl-8 flex items-center'>
+                            <Cog6ToothIcon className='w-12 h-12 mr-4' />
+                            Cài đặt hệ thống
                         </div>
                         <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 1
-                                    ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
-                                    : 'text-gray-600 focus:outline-none'
-                            }`}
-                            onClick={() => handleTabChange(1)}
+                            onMouseEnter={() => toggle(true)}
+                            onMouseLeave={() => toggle(false)}
+                            className='relative z-20'
                         >
-                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                                <ComputerDesktopIcon className='w-12 h-12 mr-4' />
-                                Thiết bị
+                            <div className='h-20 flex items-center relative'>
+                                <EllipsisVerticalIcon className='w-12 h-12 pr-4 ' />
                             </div>
-                        </div>
-                        <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 2
-                                    ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
-                                    : 'text-gray-600 focus:outline-none'
-                            }`}
-                            onClick={() => handleTabChange(2)}
-                        >
-                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                                <ChatBubbleLeftRightIcon className='w-12 h-12 mr-4' />
-                                Dịch vụ
-                            </div>
-                        </div>
-                        <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 3
-                                    ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
-                                    : 'text-gray-600 focus:outline-none'
-                            }`}
-                            onClick={() => handleTabChange(3)}
-                        >
-                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                                <Square3Stack3DIcon className='w-12 h-12 mr-4' />
-                                Cấp số
-                            </div>
-                        </div>
-                        <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 4
-                                    ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
-                                    : 'text-gray-600 focus:outline-none'
-                            }`}
-                            onClick={() => handleTabChange(4)}
-                        >
-                            <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                                <DocumentChartBarIcon className='w-12 h-12 mr-4' />
-                                Báo cáo
-                            </div>
-                        </div>
-                        <div
-                            className={`flex outline-0 text-3xl h-20 items-center ${
-                                selectedIndex === 6 ||
-                                selectedIndex === 7 ||
-                                selectedIndex === 8
-                                    ? 'bg-orange-alta text-white focus:outline-none'
-                                    : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
-                            }`}
-                        >
-                            <div className='full-size pl-8 flex items-center'>
-                                <Cog6ToothIcon className='w-12 h-12 mr-4' />
-                                Cài đặt hệ thống
-                            </div>
-                            <div
-                                onMouseEnter={() => toggle(true)}
-                                onMouseLeave={() => toggle(false)}
-                                className='relative z-20'
-                            >
-                                <div className='h-20 flex items-center relative'>
-                                    <EllipsisVerticalIcon className='w-12 h-12 pr-4 ' />
-                                </div>
-                                <div className='w-[220px] absolute bg-white top-0 left-full rounded-tr-3xl rounded-br-3xl'>
-                                    {toggleSubMenu && (
-                                        <ul>
-                                            <li
+                            <div className='w-[220px] absolute bg-white top-0 left-full rounded-tr-3xl rounded-br-3xl'>
+                                {toggleSubMenu && (
+                                    <ul>
+                                        <li>
+                                            <Link
+                                                to='/roles'
                                                 onClick={() =>
                                                     handleTabChange(6)
                                                 }
@@ -161,8 +184,11 @@ const Navbar = () => {
                                                 }`}
                                             >
                                                 Quản lý vài trò
-                                            </li>
-                                            <li
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                to='/accounts'
                                                 onClick={() =>
                                                     handleTabChange(7)
                                                 }
@@ -173,8 +199,11 @@ const Navbar = () => {
                                                 }`}
                                             >
                                                 Quản lý tài khoản
-                                            </li>
-                                            <li
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                to='/logs'
                                                 onClick={() =>
                                                     handleTabChange(8)
                                                 }
@@ -185,31 +214,13 @@ const Navbar = () => {
                                                 }`}
                                             >
                                                 Nhật ký người dùng
-                                            </li>
-                                        </ul>
-                                    )}
-                                </div>
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                )}
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div
-                    className='absolute z-40 right-2 top-2'
-                >
-                    <User onClick={() => handleTabChange(5)} />
-                </div>
-                <div className='full-size flex'>
-                    {/* Conditional rendering based on selectedIndex */}
-                    {selectedIndex === 0 && <DashboardContainer />}
-                    {selectedIndex === 1 && <DeviceContainer />}
-                    {selectedIndex === 2 && <ServiceContainer />}
-                    {selectedIndex === 3 && <NumberContainer />}
-                    {selectedIndex === 4 && <ReportContainer />}
-                    {selectedIndex === 5 && <UserInfo />}
-                    {selectedIndex === 6 && <RoleContainer />}
-                    {selectedIndex === 7 && <AccountContainer />}
-                    {selectedIndex === 8 && <LogContainer />}
                 </div>
             </div>
             <div className='mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white'>

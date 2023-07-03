@@ -18,6 +18,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from '../../../server/firebase';
 import moment from 'moment/moment';
 import { Listbox, Transition } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
 
 Chart.register(...registerables);
 
@@ -41,6 +42,8 @@ const DashboardChart = ({ date }: { date: string }) => {
     const [dailyTotals, setDailyTotals] = useState<number[]>([]);
     const [weeklyTotals, setWeeklyTotals] = useState<number[]>([]);
     const [monthlyTotals, setMonthlyTotals] = useState<number[]>([]);
+
+    const navigate = useNavigate();
 
     const daysInMonth = moment().daysInMonth();
     const firstDayOfMonth = moment().startOf('month');
@@ -332,12 +335,15 @@ const DashboardChart = ({ date }: { date: string }) => {
                             Biểu đồ cấp số
                         </div>
                         <div className='w-full flex space-x-12 absolute-center my-16'>
-                            <div className='drop-shadow-xl shadow-xl w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '>
+                            <div
+                                onClick={() => navigate('/numbers')}
+                                className='drop-shadow-xl shadow-xl w-[220px] cursor-pointer bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '
+                            >
                                 <div className='w-full mb-8 flex'>
                                     <div className='w-20 h-20 absolute-center bg-blue-100 rounded-full'>
                                         <CalendarIcon className='w-14 h-14 stroke-blue-600' />
                                     </div>
-                                    <div className='ml-6 w-[80px] text-2xl flex items-center'>
+                                    <div className='ml-6 w-[90px] font-bold font-primary text-[16px] flex items-center'>
                                         Số thứ tự đã cấp
                                     </div>
                                 </div>
@@ -370,7 +376,10 @@ const DashboardChart = ({ date }: { date: string }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='drop-shadow-xl shadow-xl w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '>
+                            <div
+                                onClick={() => navigate('/numbers', { state: { status: 'Đã sử dụng' } })}
+                                className='drop-shadow-xl cursor-pointer shadow-xl w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '
+                            >
                                 <div className='w-full mb-8 flex'>
                                     <div className='w-20 h-20 absolute-center bg-green-100 rounded-full'>
                                         <div className='relative'>
@@ -378,7 +387,7 @@ const DashboardChart = ({ date }: { date: string }) => {
                                             <CheckIcon className='w-7 h-7 absolute mt-[4px] top-1/2 left-1/2 stroke-green-500 -translate-x-1/2 -translate-y-1/2' />
                                         </div>
                                     </div>
-                                    <div className='ml-6 w-[80px] text-2xl flex items-center'>
+                                    <div className='ml-6 w-[90px] font-bold font-primary text-[16px] flex items-center'>
                                         Số thứ tự đã sử dụng
                                     </div>
                                 </div>
@@ -411,7 +420,10 @@ const DashboardChart = ({ date }: { date: string }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='drop-shadow-xl shadow-xl w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '>
+                            <div
+                                onClick={() => navigate('/numbers', { state: { status: 'Đang chờ' } })}
+                                className='drop-shadow-xl shadow-xl cursor-pointer w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '
+                            >
                                 <div className='w-full mb-8 flex'>
                                     <div className='w-20 h-20 absolute-center bg-orange-100 rounded-full'>
                                         <div className='relative'>
@@ -419,7 +431,7 @@ const DashboardChart = ({ date }: { date: string }) => {
                                             <PhoneIcon className='w-7 h-7 absolute mt-[4px] left-1/2 -top-8  stroke-orange-500 fill-orange-500' />
                                         </div>
                                     </div>
-                                    <div className='ml-6 w-[80px] text-2xl flex items-center'>
+                                    <div className='ml-6 w-[90px] font-bold font-primary text-[16px] flex items-center'>
                                         Số thứ tự đang chờ
                                     </div>
                                 </div>
@@ -452,7 +464,10 @@ const DashboardChart = ({ date }: { date: string }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='drop-shadow-xl shadow-xl w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '>
+                            <div
+                                onClick={() => navigate('/numbers', { state: { status: 'Bỏ qua' } })}
+                                className='drop-shadow-xl shadow-xl cursor-pointer w-[220px] bg-white rounded-2xl h-[130px] px-8 pb-6 pt-4 '
+                            >
                                 <div className='w-full mb-8 flex'>
                                     <div className='w-20 h-20 absolute-center bg-rose-100 rounded-full'>
                                         <div className='relative'>
@@ -460,7 +475,7 @@ const DashboardChart = ({ date }: { date: string }) => {
                                             <StarIcon className='w-5 h-5 absolute fill-rose-500 -mt-1 top-1/2 left-1/2 stroke-rose-500 -translate-x-1/2 -translate-y-1/2' />
                                         </div>
                                     </div>
-                                    <div className='ml-6 w-[80px] text-2xl flex items-center'>
+                                    <div className='ml-6 w-[90px] font-bold font-primary text-[16px] flex items-center'>
                                         Số thứ tự đã bỏ qua
                                     </div>
                                 </div>
@@ -531,7 +546,7 @@ const DashboardChart = ({ date }: { date: string }) => {
                                                     {({ open }) => (
                                                         <>
                                                             <Listbox.Button
-                                                                className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                                className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                                     isOpen
                                                                         ? 'ring-orange-200 ring-2'
                                                                         : ''
@@ -579,7 +594,7 @@ const DashboardChart = ({ date }: { date: string }) => {
                                                                                       selected,
                                                                                   }) => (
                                                                                     <div
-                                                                                        className={`cursor-default text-3xl select-none relative py-3 pl-3 pr-9 ${
+                                                                                        className={`cursor-pointer text-3xl select-none relative py-3 pl-3 pr-9 ${
                                                                                             active
                                                                                                 ? 'bg-orange-100 text-black'
                                                                                                 : ''

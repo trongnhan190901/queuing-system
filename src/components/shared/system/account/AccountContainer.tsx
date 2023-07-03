@@ -15,6 +15,8 @@ import { Listbox, Transition } from '@headlessui/react';
 import UpdateAccount from './UpdateAccount';
 import Loading from 'components/loading/Loading';
 import ReactPaginate from 'react-paginate';
+import Navbar from '../../../partials/Navbar';
+import User from '../../../partials/User';
 
 const AccountContainer = () => {
     const [isParentVisible, setIsParentVisible] = useState(true);
@@ -218,10 +220,14 @@ const AccountContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-                {isParentVisible && (
-                    <>
+            {isLoading && <Loading />}
+            {isParentVisible && (
+                <div className='full-size flex relative'>
+                    <Navbar />
+                    <div className='absolute top-2 right-2'>
+                        <User />
+                    </div>
+                    <div className='w-full h-screen bg-gray-200'>
                         <div className='flex full-size flex-col'>
                             <div className='h-32 mx-12 flex items-center'>
                                 <div className='text-gray-500 text-3xl font-bold font-primary'>
@@ -251,7 +257,7 @@ const AccountContainer = () => {
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Button
-                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                    className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                         isOpenRole
                                                             ? 'ring-orange-200 ring-2'
                                                             : 'ring-gray-300'
@@ -303,7 +309,7 @@ const AccountContainer = () => {
                                                                           active,
                                                                       }) => (
                                                                         <div
-                                                                            className={`cursor-default text-[16px] select-none relative py-6 pl-6 pr-9 ${
+                                                                            className={`cursor-pointer text-[16px] select-none relative py-6 pl-6 pr-9 ${
                                                                                 active
                                                                                     ? 'bg-orange-100 text-black'
                                                                                     : ''
@@ -417,14 +423,14 @@ const AccountContainer = () => {
                                 />
                             </div>
                         </div>
-                    </>
-                )}
-                {showAddAccount && <AddAccount />}
-                {showUpdateAccount && <UpdateAccount
-                    accountData={accountData}
-                    accountId={accountId}
-                />}
-            </div>
+                    </div>
+                </div>
+            )}
+            {showAddAccount && <AddAccount />}
+            {showUpdateAccount && <UpdateAccount
+                accountData={accountData}
+                accountId={accountId}
+            />}
         </>
     );
 };

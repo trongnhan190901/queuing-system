@@ -1,7 +1,7 @@
 import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Listbox, Transition } from '@headlessui/react';
 import { Cog8ToothIcon } from '@heroicons/react/24/solid';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
@@ -26,7 +26,20 @@ const SettingKIO = () => {
 
     const services = ['Tất cả', 'Khám tim mạch', 'Khám sản - Phụ khoa', 'Khám răng hàm mặt', 'Khám tai mũi họng', 'Khám hô hấp', 'Khám tổng quát'];
 
-    const [selectedServices, setSelectedServices] = useState<string[]>([...services]);
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (device && device.serviceUse) {
+            const selectedServices = device.serviceUse.split(', ');
+            setSelectedServices(selectedServices);
+            if (selectedServices.length === 6) {
+                if (!selectedServices.includes('Tất cả')) {
+                    setSelectedServices([...selectedServices, 'Tất cả']);
+                }
+            }
+        }
+    }, [device]);
+
 
     const serviceUseList = selectedServices
         .filter(service => service !== 'Tất cả')
@@ -41,7 +54,6 @@ const SettingKIO = () => {
                 />
             </span>
         ));
-
 
     const [serviceOpen, setServiceOpen] = useState(false);
     const handleServiceOptionChange = (option: string) => {
@@ -73,6 +85,7 @@ const SettingKIO = () => {
 
         setSelectedServices(updatedSelections);
     };
+
     return (
         <>
             {showSetting && (
@@ -109,7 +122,6 @@ const SettingKIO = () => {
                                     </div>
                                     <Listbox
                                         value={selectedServices}
-                                        onChange={setSelectedServices}
                                     >
                                         {({ open }) => (
                                             <>
@@ -146,19 +158,17 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
+                                                                    onClick={() => handleServiceOptionChange('Tất cả')}
+                                                                    className={`cursor-pointer w-full text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Tất cả')}
-                                                                            onChange={() => handleServiceOptionChange('Tất cả')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Tất cả')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Tất cả
                                                                     </span>
-                                                                    </label>
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -170,23 +180,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám tim mạch')}
+                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center w-full'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám tim mạch')}
-                                                                            onChange={() => handleServiceOptionChange('Khám tim mạch')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám tim mạch')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Khám tim mạch
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -198,23 +207,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám sản - Phụ khoa')}
+                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám sản - Phụ khoa')}
-                                                                            onChange={() => handleServiceOptionChange('Khám sản - Phụ khoa')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám sản - Phụ khoa')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Khám sản - Phụ khoa
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -226,23 +234,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám răng hàm mặt')}
+                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám răng hàm mặt')}
-                                                                            onChange={() => handleServiceOptionChange('Khám răng hàm mặt')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám răng hàm mặt')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Khám răng hàm mặt
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -254,23 +261,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám tai mũi họng')}
+                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám tai mũi họng')}
-                                                                            onChange={() => handleServiceOptionChange('Khám tai mũi họng')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám tai mũi họng')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                       Khám tai mũi họng
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -282,23 +288,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám hô hấp')}
+                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám hô hấp')}
-                                                                            onChange={() => handleServiceOptionChange('Khám hô hấp')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám hô hấp')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Khám hô hấp
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>
@@ -310,23 +315,22 @@ const SettingKIO = () => {
                                                                   selected,
                                                               }) => (
                                                                 <div
-                                                                    className={`cursor-default flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                    onClick={() => handleServiceOptionChange('Khám tổng quát')}
+                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                         active
                                                                             ? 'bg-orange-100 '
                                                                             : ''
                                                                     }`}
                                                                 >
-                                                                    <label className='flex items-center'>
-                                                                        <input
-                                                                            type='checkbox'
-                                                                            className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                            checked={selectedServices.includes('Khám tổng quát')}
-                                                                            onChange={() => handleServiceOptionChange('Khám tổng quát')}
-                                                                        />
-                                                                        <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
+                                                                        checked={selectedServices.includes('Khám tổng quát')}
+                                                                    />
+                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                                                        Khám tổng quát
                                                                     </span>
-                                                                    </label>
+
                                                                 </div>
                                                             )}
                                                         </Listbox.Option>

@@ -18,13 +18,19 @@ import ReactPaginate from 'react-paginate';
 import Loading from '../../loading/Loading';
 import { Listbox, Transition } from '@headlessui/react';
 import Calendar from 'react-calendar';
+import Navbar from '../../partials/Navbar';
+import User from '../../partials/User';
+import { useLocation } from 'react-router-dom';
 
 const NumberContainer = () => {
+    const location = useLocation();
+    const statusState = location.state?.status;
+
     const [isLoading, setIsLoading] = useState(false);
     const services = ['Tất cả', 'Khám tim mạch', 'Khám sản - Phụ khoa', 'Khám răng hàm mặt', 'Khám tai mũi họng', 'Khám hô hấp', 'Khám tổng quát'];
     const [selectedServices, setSelectedServices] = useState(services[0]);
     const status = ['Tất cả', 'Đang chờ', 'Đã sử dụng', 'Bỏ qua'];
-    const [selectedStatus, setSelectedStatus] = useState(status[0]);
+    const [selectedStatus, setSelectedStatus] = useState(statusState || status[0]);
     const source = ['Tất cả', 'Kiosk', 'Hệ thống'];
     const [selectedSource, setSelectedSource] = useState(source[0]);
 
@@ -40,7 +46,6 @@ const NumberContainer = () => {
         setIsParentVisible(!isParentVisible);
         setShowAddNumber(!showAddNumber);
     };
-
 
     const [numbers, setNumbers] = useState<NumberType[]>([]);
 
@@ -272,10 +277,14 @@ const NumberContainer = () => {
 
     return (
         <>
-            <div className='w-full h-screen bg-gray-200'>
-                {isLoading && <Loading />}
-                {isParentVisible && (
-                    <>
+            {isLoading && <Loading />}
+            {isParentVisible && (
+                <div className='full-size flex relative'>
+                    <Navbar />
+                    <div className='absolute top-2 right-2'>
+                        <User />
+                    </div>
+                    <div className='w-full h-screen bg-gray-200'>
                         <div className='h-32 mx-12 flex items-center'>
                             <div className='text-gray-500 text-3xl font-bold font-primary'>
                                 Cấp số
@@ -303,7 +312,7 @@ const NumberContainer = () => {
                                         <>
                                             <Listbox.Button
                                                 className={`relative mt-4 rounded-xl w-full bg-white border border-gray-300
-                                                 shadow-sm pl-6 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                 shadow-sm pl-6 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                     serviceOpen ? 'ring-orange-200 ring-2' : ''
                                                 }`}
                                                 onClick={() => setServiceOpen(!serviceOpen)}
@@ -345,7 +354,7 @@ const NumberContainer = () => {
                                                         >
                                                             {({ active, selected }) => (
                                                                 <div
-                                                                    className={`cursor-default text-[16px] select-none relative py-3 pl-3 pr-9 ${
+                                                                    className={`cursor-pointer text-[16px] select-none relative py-3 pl-3 pr-9 ${
                                                                         active ? 'bg-orange-100 text-black' : ''
                                                                     }`}
                                                                 >
@@ -380,7 +389,7 @@ const NumberContainer = () => {
                                         <>
                                             <Listbox.Button
                                                 className={`relative mt-4 rounded-xl w-full bg-white border- border-gray-300
-                                                 shadow-sm pl-6 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                 shadow-sm pl-6 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                     statusOpen ? 'ring-orange-200 ring-2' : ''
                                                 }`}
                                                 onClick={() => setStatusOpen(!statusOpen)}
@@ -422,7 +431,7 @@ const NumberContainer = () => {
                                                         >
                                                             {({ active, selected }) => (
                                                                 <div
-                                                                    className={`cursor-default text-[16px] select-none relative py-3 pl-3 pr-9 ${
+                                                                    className={`cursor-pointer text-[16px] select-none relative py-3 pl-3 pr-9 ${
                                                                         active ? 'bg-orange-100 text-black' : ''
                                                                     }`}
                                                                 >
@@ -457,7 +466,7 @@ const NumberContainer = () => {
                                         <>
                                             <Listbox.Button
                                                 className={`relative mt-4 rounded-xl w-full bg-white border- border-gray-300
-                                                 shadow-sm pl-6 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
+                                                 shadow-sm pl-6 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-200 focus:border-orange-200 sm:text-sm ${
                                                     statusOpen ? 'ring-orange-200 ring-2' : ''
                                                 }`}
                                                 onClick={() => setSourceOpen(!sourceOpen)}
@@ -499,7 +508,7 @@ const NumberContainer = () => {
                                                         >
                                                             {({ active, selected }) => (
                                                                 <div
-                                                                    className={`cursor-default text-[16px] select-none relative py-3 pl-3 pr-9 ${
+                                                                    className={`cursor-pointer text-[16px] select-none relative py-3 pl-3 pr-9 ${
                                                                         active ? 'bg-orange-100 text-black' : ''
                                                                     }`}
                                                                 >
@@ -530,7 +539,7 @@ const NumberContainer = () => {
                                                     {({ open }) => (
                                                         <>
                                                             <Listbox.Button
-                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                     open ? 'ring-2 ring-orange-100' : ''
                                                                 }`}
                                                                 onClick={handleToggleCalendar}
@@ -574,7 +583,7 @@ const NumberContainer = () => {
                                                     {({ open }) => (
                                                         <>
                                                             <Listbox.Button
-                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
+                                                                className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
                                                                     open ? 'ring-2 ring-orange-100' : ''
                                                                 }`}
                                                                 onClick={handleToggleCalendar}
@@ -692,14 +701,15 @@ const NumberContainer = () => {
                                 pageLinkClassName={'page_link'}
                             />
                         </div>
-                    </>
-                )}
-                {showAddNumber && <AddNumber />}
-                {showDetailNumber && <NumberDetail
-                    numberData={numberData}
-                    numberId={numberId}
-                />}
-            </div>
+                    </div>
+                </div>
+
+            )}
+            {showAddNumber && <AddNumber />}
+            {showDetailNumber && <NumberDetail
+                numberData={numberData}
+                numberId={numberId}
+            />}
         </>
     );
 };

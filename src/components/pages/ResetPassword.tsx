@@ -88,7 +88,7 @@ const ResetPassword = () => {
                                     }}
                                 />
                                 <div
-                                    className='absolute top-16 right-2 transform -translate-y-1/2'
+                                    className='absolute cursor-pointer top-16 right-2 transform -translate-y-1/2'
                                     onClick={handleTogglePassword1Visibility}
                                 >
                                     <EyeSlashIcon className='w-9 h-9 mr-4' />
@@ -109,7 +109,7 @@ const ResetPassword = () => {
                                 }}
                             />
                             <div
-                                className='absolute top-16 right-2 transform -translate-y-1/2'
+                                className='absolute top-16 cursor-pointer right-2 transform -translate-y-1/2'
                                 onClick={handleTogglePassword2Visibility}
                             >
                                 <EyeSlashIcon className='w-9 h-9 mr-4' />

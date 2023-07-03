@@ -6,12 +6,9 @@ import { NumberType } from '../../types';
 import { collection, DocumentSnapshot, onSnapshot, query, Timestamp, where } from 'firebase/firestore';
 import { firestore } from '../../server/firebase';
 import { dateFormat4 } from '../../helper/dateFormat';
+import { Link } from 'react-router-dom';
 
-interface UserProps {
-    onClick: () => void;
-}
-
-const User = ({ onClick }: UserProps) => {
+const User = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const [notiOpen, setNotiOpen] = useState(false);
     const [numbers, setNumbers] = useState<NumberType[]>([]);
@@ -52,17 +49,17 @@ const User = ({ onClick }: UserProps) => {
 
     return (
         <>
-            <div className='h-24 flex justify-end z-20 w-full my-4'>
+            <div className='h-24 flex justify-end w-full my-4'>
                 <div className='absolute-center h-full mx-6'>
-                    <div className='w-[32px] group z-20 h-[32px] hover:bg-orange-alta mx-4 bg-orange-100 rounded-full absolute-center'>
+                    <div className='w-[32px] cursor-pointer group z-20 h-[32px] hover:bg-orange-alta mx-4 bg-orange-100 rounded-full absolute-center'>
                         <BellIcon
                             onClick={() => setNotiOpen(!notiOpen)}
                             className='h-8 w-8 stroke-orange-400 fill-orange-400 group-hover:fill-white group-hover:stroke-white cursor-pointer'
                         />
                     </div>
-                    <div
-                        onClick={onClick}
-                        className='rounded-full transition-colors duration-300 hover:bg-orange-100 px-8 h-full absolute-center'
+                    <Link
+                        to='/user'
+                        className='rounded-full z-10 cursor-pointer transition-colors duration-300 hover:bg-orange-100 px-8 h-full absolute-center'
                     >
                         <div className='mr-4'>
                             <img
@@ -75,7 +72,7 @@ const User = ({ onClick }: UserProps) => {
                             <div className='text-gray-500'>Xin chào</div>
                             <div className='text-2xl'>{user?.fullName}</div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
             {notiOpen && (
