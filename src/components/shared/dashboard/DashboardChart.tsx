@@ -116,6 +116,8 @@ const DashboardChart = ({ date }: { date: string }) => {
         ],
     };
 
+    console.log(monthlyTotals);
+
     const monthData = {
         labels: monthLabels,
         datasets: [
@@ -155,8 +157,8 @@ const DashboardChart = ({ date }: { date: string }) => {
                 const querySnapshot = await getDocs(
                     query(
                         numbersRef,
-                        where('createdAt', '>=', moment(date).startOf('month').toDate()),
-                        where('createdAt', '<=', moment(date).endOf('month').toDate()),
+                        where('createdAt', '>=', moment(date).startOf('year').toDate()),
+                        where('createdAt', '<=', moment(date).endOf('year').toDate()),
                     ),
                 );
 

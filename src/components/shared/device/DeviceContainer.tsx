@@ -1,5 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     ChevronDownIcon,
     ChevronLeftIcon,
@@ -118,6 +118,24 @@ const DeviceContainer = () => {
         }
     };
 
+    const [isExpanded, setIsExpanded] = useState(false);
+    const expandRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (expandRef.current && !(expandRef.current as HTMLElement).contains(event.target as Node)) {
+                setIsExpanded(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+
     const displayDevices = devices
         .filter((device) => {
             // Lọc theo trạng thái hoạt động
@@ -221,9 +239,10 @@ const DeviceContainer = () => {
                             </th>
                             <th className='border border-orange-200 py-2 pl-6 w-[350px] leading-snug font-thin text-start'>
                                 <div
+                                    ref={expandRef}
                                     className={`leading-normal ${
                                         isExpanded
-                                            ? 'h-auto'
+                                            ? 'w-[500px] absolute z-10 bg-white h-auto border-2 border-orange-alta rounded-2xl px-2'
                                             : 'line-clamp-1 w-[240px]'
                                     }`}
                                 >
@@ -233,7 +252,7 @@ const DeviceContainer = () => {
                                     onClick={() => handleToggleExpand(index)}
                                     className='cursor-pointer underline-offset-4 hover:no-underline underline text-blue-500'
                                 >
-                                    {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+                                    {expandedIndex === index ? 'Thu gọn' : 'Xem thêm'}
                                 </div>
                             </th>
                             <th
