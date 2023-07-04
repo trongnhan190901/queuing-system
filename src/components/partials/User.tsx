@@ -1,12 +1,12 @@
 import { BellIcon } from '@heroicons/react/24/outline';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NumberType } from '../../types';
-import { collection, DocumentSnapshot, onSnapshot, query, Timestamp, where } from 'firebase/firestore';
+import { collection, DocumentSnapshot, onSnapshot } from 'firebase/firestore';
 import { firestore } from '../../server/firebase';
 import { dateFormat4 } from '../../helper/dateFormat';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const User = () => {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -14,13 +14,8 @@ const User = () => {
     const [numbers, setNumbers] = useState<NumberType[]>([]);
 
     useEffect(() => {
-        const currentDate = new Date();
-        const startOfCurrentDay = Timestamp.fromDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()));
-        const endOfCurrentDay = Timestamp.fromDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1));
-
         const numbersRef = collection(firestore, 'numbers');
-        const numbersQuery = query(numbersRef, where('createdAt', '>=', startOfCurrentDay), where('createdAt', '<', endOfCurrentDay));
-        const unsubscribe = onSnapshot(numbersQuery, (snapshot) => {
+        const unsubscribe = onSnapshot(numbersRef, (snapshot) => {
             const numbersData: NumberType[] = snapshot.docs.map((doc: DocumentSnapshot) => {
                 const numberData = doc.data() as NumberType;
                 const numberId = doc.id;
@@ -34,10 +29,19 @@ const User = () => {
                 return number.number !== 'counter';
             });
 
-            filteredNumbersData.sort((a, b) =>
+            filteredNumbersData.sort((a, b) => {
                 // @ts-ignore
-                b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime(),
-            );
+                const createdAtA = a?.createdAt?.toDate();
+                // @ts-ignore
+                const createdAtB = b?.createdAt?.toDate();
+
+                if (createdAtA && createdAtB) {
+                    return createdAtB.getTime() - createdAtA.getTime();
+                }
+
+                return 0;
+            });
+
 
             setNumbers(filteredNumbersData);
         });
@@ -46,6 +50,32 @@ const User = () => {
             unsubscribe();
         };
     }, []);
+
+
+    const notiContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (notiContainerRef.current && !notiContainerRef.current.contains(event.target as HTMLElement)) {
+                setNotiOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const [selectedNumber, setSelectedNumber] = useState<NumberType | null>(null);
+    const navigate = useNavigate();
+
+    const goDetail = (number: NumberType) => {
+        setSelectedNumber(number);
+        navigate('/numbers', { state: { data: `${number}`, id: `${number.id}` } });
+    };
+
 
     return (
         <>
@@ -76,24 +106,29 @@ const User = () => {
                 </div>
             </div>
             {notiOpen && (
-                <div className='max-h-[400px] border rounded-2xl mr-16 w-[400px] bg-white'>
-                    <div className='full-size overflow-auto'>
+                <div
+                    ref={notiContainerRef}
+                    className='max-h-[400px] z-[100] border rounded-2xl mr-16 w-[400px] bg-white'
+                >
+                    <div className='full-size overflow-auto drop-shadow-2xl'>
                         <div className='h-20 rounded-tl-2xl rounded-tr-2xl text-white flex items-center px-5 bg-orange-alta text-[20px] font-primary font-bold'>
                             Thông báo
                         </div>
-                        <div className='max-h-[350px] h-[350px] rounded-bl-2xl rounded-br-2xl z-20 w-full overflow-y-scroll bg-white overflow-x-hidden '>
+                        <div className='max-h-[650px] h-[650px] rounded-bl-2xl rounded-br-2xl z-20 w-full overflow-y-scroll bg-white overflow-x-hidden '>
                             {numbers?.length > 0 ? (
                                 numbers.map((number, index) => (
                                     <div
                                         key={index}
-                                        className='w-full h-32 flex justify-center flex-col pb-2 ml-6 mr-3 my-2 border-b border-gray-300'
+                                        onClick={() => goDetail(number)}
+                                        className='w-full cursor-pointer h-36 hover:bg-orange-100 flex justify-center flex-col pb-2 pl-6 pr-3 py-2 border-b border-gray-300'
                                     >
-                                        <div className='text-[18px] my-1 font-primary font-semibold text-orange-800'>
+                                        <div className='text-[20px] my-1 font-primary font-semibold text-orange-800'>
                                             Người dùng: {number.fullName}
                                         </div>
-                                        <div className='text-[16px] text-gray-600 font-primary font-medium'>
+                                        <div className='text-[17px] text-gray-600 font-primary font-medium'>
+                                            Thời gian nhận
                                             {/*// @ts-ignore*/}
-                                            Thời gian nhận số: {dateFormat4(number.createdAt.toDate().toISOString())}
+                                            số: {dateFormat4(number.createdAt.toDate().toISOString())}
                                         </div>
                                     </div>
                                 ))
@@ -102,11 +137,11 @@ const User = () => {
                                     Không có thông báo
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>
             )}
+
         </>
     );
 };

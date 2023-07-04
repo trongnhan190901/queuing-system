@@ -9,15 +9,15 @@ import {
     Squares2X2Icon,
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from 'store/authSlice';
-
 
 const Navbar = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const [toggleSubMenu, setToggleSubMenu] = useState(false);
 
     const toggle = (show: boolean) => {
@@ -27,7 +27,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             dispatch(logout());
-            // Navigate to the login page
+            navigate('/login');
         } catch (error) {
             console.log('Logout failed', error);
         }
@@ -46,7 +46,7 @@ const Navbar = () => {
             setSelectedIndex(1);
         } else if (currentPath === '/services') {
             setSelectedIndex(2);
-        } else if (currentPath === '/numbers') {
+        } else if (currentPath.includes('/numbers')) {
             setSelectedIndex(3);
         } else if (currentPath === '/reports') {
             setSelectedIndex(4);
@@ -63,21 +63,17 @@ const Navbar = () => {
 
     return (
         <>
-
-            <div className='w-[240px] h-full font-bold font-primary flex flex-col'>
-                <Link
-                    to='/'
-                    className='flex justify-center w-full'
-                >
+            <div className="w-[240px] h-full font-bold font-primary flex flex-col">
+                <Link to="/" className="flex justify-center w-full">
                     <img
-                        className='w-[100px] my-24 h-fit'
-                        src='/logo.png'
-                        alt=''
+                        className="w-[100px] my-24 h-fit"
+                        src="/logo.png"
+                        alt=""
                     />
                 </Link>
-                <div className='flex w-[240px] flex-col space-y-4'>
+                <div className="flex w-[240px] flex-col space-y-4">
                     <Link
-                        to='/'
+                        to="/"
                         className={`flex outline-0 text-3xl h-20 items-center ${
                             selectedIndex === 0
                                 ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
@@ -85,13 +81,13 @@ const Navbar = () => {
                         }`}
                         onClick={() => handleTabChange(0)}
                     >
-                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                            <Squares2X2Icon className='w-12 h-12 mr-4' />
+                        <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
+                            <Squares2X2Icon className="w-12 h-12 mr-4" />
                             Dashboard
                         </div>
                     </Link>
                     <Link
-                        to='/devices'
+                        to="/devices"
                         className={`flex outline-0 text-3xl h-20 items-center ${
                             selectedIndex === 1
                                 ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
@@ -99,13 +95,13 @@ const Navbar = () => {
                         }`}
                         onClick={() => handleTabChange(1)}
                     >
-                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                            <ComputerDesktopIcon className='w-12 h-12 mr-4' />
+                        <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
+                            <ComputerDesktopIcon className="w-12 h-12 mr-4" />
                             Thiết bị
                         </div>
                     </Link>
                     <Link
-                        to='/services'
+                        to="/services"
                         className={`flex outline-0 text-3xl h-20 items-center ${
                             selectedIndex === 2
                                 ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
@@ -113,13 +109,13 @@ const Navbar = () => {
                         }`}
                         onClick={() => handleTabChange(2)}
                     >
-                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                            <ChatBubbleLeftRightIcon className='w-12 h-12 mr-4' />
+                        <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
+                            <ChatBubbleLeftRightIcon className="w-12 h-12 mr-4" />
                             Dịch vụ
                         </div>
                     </Link>
                     <Link
-                        to='/numbers'
+                        to="/numbers"
                         className={`flex outline-0 text-3xl h-20 items-center ${
                             selectedIndex === 3
                                 ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
@@ -127,13 +123,13 @@ const Navbar = () => {
                         }`}
                         onClick={() => handleTabChange(3)}
                     >
-                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                            <Square3Stack3DIcon className='w-12 h-12 mr-4' />
+                        <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
+                            <Square3Stack3DIcon className="w-12 h-12 mr-4" />
                             Cấp số
                         </div>
                     </Link>
                     <Link
-                        to='/reports'
+                        to="/reports"
                         className={`flex outline-0 text-3xl h-20 items-center ${
                             selectedIndex === 4
                                 ? 'bg-orange-alta text-white focus:outline-none pointer-events-none'
@@ -141,8 +137,8 @@ const Navbar = () => {
                         }`}
                         onClick={() => handleTabChange(4)}
                     >
-                        <div className='hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center'>
-                            <DocumentChartBarIcon className='w-12 h-12 mr-4' />
+                        <div className="hover:bg-orange-100 full-size pl-8 hover:text-orange-alta flex items-center">
+                            <DocumentChartBarIcon className="w-12 h-12 mr-4" />
                             Báo cáo
                         </div>
                     </Link>
@@ -156,24 +152,24 @@ const Navbar = () => {
                                 : 'text-gray-600 focus:outline-none hover:bg-orange-100 hover:text-orange-alta'
                         }`}
                     >
-                        <div className='full-size pl-8 flex items-center'>
-                            <Cog6ToothIcon className='w-12 h-12 mr-4' />
+                        <div className="full-size pl-8 flex items-center">
+                            <Cog6ToothIcon className="w-12 h-12 mr-4" />
                             Cài đặt hệ thống
                         </div>
                         <div
                             onMouseEnter={() => toggle(true)}
                             onMouseLeave={() => toggle(false)}
-                            className='relative z-20'
+                            className="relative z-20"
                         >
-                            <div className='h-20 flex items-center relative'>
-                                <EllipsisVerticalIcon className='w-12 h-12 pr-4 ' />
+                            <div className="h-20 flex items-center relative">
+                                <EllipsisVerticalIcon className="w-12 h-12 pr-4 " />
                             </div>
-                            <div className='w-[220px] absolute bg-white top-0 left-full rounded-tr-3xl rounded-br-3xl'>
+                            <div className="w-[220px] absolute bg-white top-0 left-full rounded-tr-3xl rounded-br-3xl">
                                 {toggleSubMenu && (
                                     <ul>
                                         <li>
                                             <Link
-                                                to='/roles'
+                                                to="/roles"
                                                 onClick={() =>
                                                     handleTabChange(6)
                                                 }
@@ -188,7 +184,7 @@ const Navbar = () => {
                                         </li>
                                         <li>
                                             <Link
-                                                to='/accounts'
+                                                to="/accounts"
                                                 onClick={() =>
                                                     handleTabChange(7)
                                                 }
@@ -203,7 +199,7 @@ const Navbar = () => {
                                         </li>
                                         <li>
                                             <Link
-                                                to='/logs'
+                                                to="/logs"
                                                 onClick={() =>
                                                     handleTabChange(8)
                                                 }
@@ -223,12 +219,12 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-            <div className='mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white'>
+            <div className="mx-4 my-12 z-20 cursor-pointer rounded-2xl flex absolute w-[22rem] bottom-0 items-end text-orange-alta bg-orange-100 hover:bg-orange-alta hover:text-white">
                 <button
                     onClick={handleLogout}
-                    className='flex pl-4 text-3xl cursor-pointer font-bold font-primary h-20 items-center'
+                    className="flex pl-4 text-3xl cursor-pointer font-bold font-primary h-20 items-center"
                 >
-                    <ArrowUpTrayIcon className='w-12 stroke-2 rotate-90 h-12 mr-4' />
+                    <ArrowUpTrayIcon className="w-12 stroke-2 rotate-90 h-12 mr-4" />
                     Đăng xuất
                 </button>
             </div>

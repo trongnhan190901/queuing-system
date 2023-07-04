@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/shared/MainPage';
 import ForgotPassword from './components/pages/ForgotPassword';
@@ -17,8 +17,12 @@ import ReportContainer from './components/shared/report/ReportContainer';
 import RoleContainer from './components/shared/system/role/RoleContainer';
 import AccountContainer from './components/shared/system/account/AccountContainer';
 import LogContainer from './components/shared/system/log/LogContainer';
+import NumberDetail from './components/shared/number/NumberDetail';
 
 const AppContent = () => {
+    const location = useLocation();
+    const numberData = location.state?.data;
+    const numberId = location.state?.id;
 
     return (
         <div className='full-size flex'>
@@ -32,7 +36,6 @@ const AppContent = () => {
                 }}
             />
             <Routes>
-
                 <Route
                     path='/login'
                     element={<LoginPage />}
@@ -69,10 +72,20 @@ const AppContent = () => {
                     path='/services'
                     element={<ServiceContainer />}
                 />
-                <Route
-                    path='/numbers'
-                    element={<NumberContainer />}
-                />
+                {numberData && numberId ? (
+                    <Route
+                        path='/numbers'
+                        element={<NumberDetail
+                            numberData={numberData}
+                            numberId={numberId}
+                        />}
+                    />
+                ) : (
+                    <Route
+                        path='/numbers'
+                        element={<NumberContainer />}
+                    />
+                )}
                 <Route
                     path='/reports'
                     element={<ReportContainer />}

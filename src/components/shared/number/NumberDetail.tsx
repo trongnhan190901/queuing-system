@@ -1,10 +1,13 @@
 import { ArrowUturnLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NumberContainer from './NumberContainer';
 import { NumberType } from 'types';
 import { dateFormat2 } from 'helper/dateFormat';
 import Navbar from '../../partials/Navbar';
 import User from '../../partials/User';
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore } from '../../../server/firebase';
+import { useNavigate } from 'react-router-dom';
 
 interface DetailNumberProp {
     numberData: NumberType | null;
@@ -14,18 +17,49 @@ interface DetailNumberProp {
 const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
     const [showDetailDevice, setShowDetailDevice] = useState(true);
     const [showContainer, setShowContainer] = useState(false);
+    const [fetchedNumberData, setFetchedNumberData] = useState<NumberType | null>(null);
+    const navigate = useNavigate();
 
     const showNumberContainer = () => {
         setShowDetailDevice(!showDetailDevice);
         setShowContainer(!showContainer);
+        navigate('/numbers', { state: { data: null, id: null } });
     };
+
+    useEffect(() => {
+        const fetchNumberData = async () => {
+            try {
+                const numberDocRef = doc(firestore, 'numbers', numberId);
+                const numberDocSnapshot = await getDoc(numberDocRef);
+                if (numberDocSnapshot.exists()) {
+                    const numberData = numberDocSnapshot.data() as NumberType;
+                    setFetchedNumberData(numberData);
+                } else {
+                    // Handle case when the document doesn't exist
+                    setFetchedNumberData(null);
+                }
+            } catch (error) {
+                // Handle error
+                console.log('Error fetching number data:', error);
+            }
+        };
+
+        // Fetch number data only if the numberId is provided
+        if (numberId) {
+            fetchNumberData();
+        }
+    }, [numberId]);
+
+    // Render the fetchedNumberData or numberData based on availability
+    const numberDataToRender = numberId ? fetchedNumberData : numberData;
+
 
     return (
         <>
             {showDetailDevice && (
                 <div className='full-size flex relative'>
                     <Navbar />
-                    <div className='absolute top-2 right-2'>
+                    <div className='absolute top-2 z-30 right-2'>
                         <User />
                     </div>
                     <div className='w-full h-screen bg-gray-200'>
@@ -66,21 +100,21 @@ const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
                                                 </div>
                                                 <div className='flex font-primary ml-24 text-[17px] flex-col'>
                                                     <div>
-                                                        {numberData?.fullName}
+                                                        {numberDataToRender?.fullName}
                                                     </div>
                                                     <div>
-                                                        {numberData?.serviceSelect}
+                                                        {numberDataToRender?.serviceSelect}
                                                     </div>
                                                     <div>
-                                                        {numberData?.number}
-                                                    </div>
-                                                    <div>
-                                                        {/*// @ts-ignore*/}
-                                                        {dateFormat2(numberData?.createdAt.toDate().toISOString())}
+                                                        {numberDataToRender?.number}
                                                     </div>
                                                     <div>
                                                         {/*// @ts-ignore*/}
-                                                        {dateFormat2(numberData?.expirationTime.toDate().toISOString())}
+                                                        {dateFormat2(numberDataToRender?.createdAt.toDate().toISOString())}
+                                                    </div>
+                                                    <div>
+                                                        {/*// @ts-ignore*/}
+                                                        {dateFormat2(numberDataToRender?.expirationTime.toDate().toISOString())}
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,15 +127,15 @@ const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
                                                 </div>
                                                 <div className='flex font-primary  ml-24 text-[17px] flex-col'>
                                                     <div>
-                                                        {numberData?.source}
+                                                        {numberDataToRender?.source}
                                                     </div>
                                                     <div>
-                                                        {numberData?.status === 'WAITING' ? (
+                                                        {numberDataToRender?.status === 'WAITING' ? (
                                                             <div className='flex'>
                                                                 <div className='w-3 h-3 mt-8 mr-3 rounded-full bg-blue-500'></div>
                                                                 <span>Đang chờ</span>
                                                             </div>
-                                                        ) : numberData?.status === 'USED' ? (
+                                                        ) : numberDataToRender?.status === 'USED' ? (
                                                             <div className='flex'>
                                                                 <div className='w-3 h-3 mt-8 mr-3 rounded-full bg-gray-500'></div>
                                                                 <span>Đã sử dụng</span>
@@ -114,10 +148,10 @@ const DetailDevice = ({ numberData, numberId }: DetailNumberProp) => {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        {numberData?.phone}
+                                                        {numberDataToRender?.phone}
                                                     </div>
                                                     <div>
-                                                        {numberData?.email}
+                                                        {numberDataToRender?.email}
                                                     </div>
                                                 </div>
                                             </div>

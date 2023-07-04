@@ -167,7 +167,7 @@ const AddNumber = () => {
                 <>
                     <div className='full-size flex relative'>
                         {isLoggedIn && <Navbar />}
-                        <div className='absolute top-2 right-2'>
+                        <div className='absolute top-2 z-30 right-2'>
                             {isLoggedIn && <User />}
                         </div>
                         <div className='w-full h-screen bg-gray-200'>

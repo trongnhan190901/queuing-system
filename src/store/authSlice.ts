@@ -63,7 +63,7 @@ export const login = createAsyncThunk(
 
                     return { device };
                 } else {
-                    throw new Error('Đăng nhập không thành công');
+                    throw new Error('Sai mật khẩu hoặc tên đăng nhập');
                 }
             }
         } catch (error: any) {
@@ -73,7 +73,6 @@ export const login = createAsyncThunk(
         }
     },
 );
-
 
 const setLoading = createAction<boolean>('auth/setLoading');
 

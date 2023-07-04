@@ -131,7 +131,7 @@ const AddRole = () => {
             {showAddRole && (
                 <div className='full-size flex relative'>
                     <Navbar />
-                    <div className='absolute top-2 right-2'>
+                    <div className='absolute top-2 z-30 right-2'>
                         <User />
                     </div>
                     <div className='w-full h-screen bg-gray-200'>
