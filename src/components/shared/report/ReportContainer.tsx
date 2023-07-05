@@ -1,4 +1,9 @@
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, FolderArrowDownIcon } from '@heroicons/react/24/outline';
+import {
+    CalendarDaysIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    FolderArrowDownIcon,
+} from '@heroicons/react/24/outline';
 import React, { useEffect, useRef, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from 'server/firebase';
@@ -18,7 +23,18 @@ const ReportContainer = () => {
     const [selectedStatus, setSelectedStatus] = useState(status[0]);
     const source = ['Tất cả', 'Kiosk', 'Hệ thống'];
     const [selectedSource, setSelectedSource] = useState(source[0]);
-    const numberArr = ['Tất cả', '2010001', '2020001', '2030001', '2040001', '2050001', '2060001', '2070001', '2080001', '2090001'];
+    const numberArr = [
+        'Tất cả',
+        '2010001',
+        '2020001',
+        '2030001',
+        '2040001',
+        '2050001',
+        '2060001',
+        '2070001',
+        '2080001',
+        '2090001',
+    ];
     const [selectedNumber, setSelectedNumber] = useState(numberArr[0]);
     const [uniqueTimes, setUniqueTimes] = useState(['Tất cả']);
     const [selectedTime, setSelectedTime] = useState('Tất cả');
@@ -32,8 +48,12 @@ const ReportContainer = () => {
     const [numbers, setNumbers] = useState<NumberType[]>([]);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
-    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(new Date());
+    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    );
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(
+        new Date(),
+    );
     const calendarRef = useRef<HTMLDivElement>(null);
 
     const handleToggleCalendar = () => {
@@ -51,7 +71,10 @@ const ReportContainer = () => {
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        if (
+            calendarRef.current &&
+            !calendarRef.current.contains(event.target as Node)
+        ) {
             setIsOpen(false);
         }
     };
@@ -62,7 +85,6 @@ const ReportContainer = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
 
     useEffect(() => {
         const fetchNumbers = async () => {
@@ -75,15 +97,21 @@ const ReportContainer = () => {
                     const numberId = doc.id;
                     return { ...numberData, id: numberId };
                 });
-                const filteredNumbersData = numbersData.filter((number, index) => {
-                    if (number.number === 'counter' && index === numbersData.length - 1) {
-                        return true; // Giữ lại số cuối cùng nếu là "counter"
-                    }
-                    return number.number !== 'counter';
-                });
+                const filteredNumbersData = numbersData.filter(
+                    (number, index) => {
+                        if (
+                            number.number === 'counter' &&
+                            index === numbersData.length - 1
+                        ) {
+                            return true; // Giữ lại số cuối cùng nếu là "counter"
+                        }
+                        return number.number !== 'counter';
+                    },
+                );
 
-
-                filteredNumbersData.sort((a, b) => a.number.toString().localeCompare(b.number.toString())); // Sắp xếp mảng theo trường "number"
+                filteredNumbersData.sort((a, b) =>
+                    a.number.toString().localeCompare(b.number.toString()),
+                ); // Sắp xếp mảng theo trường "number"
 
                 setNumbers(filteredNumbersData);
                 setIsLoading(false);
@@ -94,18 +122,21 @@ const ReportContainer = () => {
         };
 
         fetchNumbers();
-
     }, []);
-
 
     useEffect(() => {
         const newUniqueTimes: any[] = [];
         numbers.forEach((number) => {
-
-            // @ts-ignore
-            if (newUniqueTimes.indexOf(dateFormat2(number.createdAt.toDate().toISOString())) === -1) {
-                // @ts-ignore
-                newUniqueTimes.push(dateFormat2(number.createdAt.toDate().toISOString()));
+            if (
+                newUniqueTimes.indexOf(
+                    // @ts-ignore
+                    dateFormat2(number.createdAt.toDate().toISOString()),
+                ) === -1
+            ) {
+                newUniqueTimes.push(
+                    // @ts-ignore
+                    dateFormat2(number.createdAt.toDate().toISOString()),
+                );
             }
         });
 
@@ -114,8 +145,18 @@ const ReportContainer = () => {
         setUniqueTimes(newUniqueTimes);
     }, [numbers]);
 
-    const services = ['Tất cả', 'Khám tim mạch', 'Khám sản - Phụ khoa', 'Khám răng hàm mặt', 'Khám tai mũi họng', 'Khám hô hấp', 'Khám tổng quát'];
-    const [selectedServices, setSelectedServices] = useState<string[]>([...services]);
+    const services = [
+        'Tất cả',
+        'Khám tim mạch',
+        'Khám sản - Phụ khoa',
+        'Khám răng hàm mặt',
+        'Khám tai mũi họng',
+        'Khám hô hấp',
+        'Khám tổng quát',
+    ];
+    const [selectedServices, setSelectedServices] = useState<string[]>([
+        ...services,
+    ]);
 
     const handleServiceOptionChange = (option: string) => {
         let updatedSelections: string[];
@@ -131,22 +172,31 @@ const ReportContainer = () => {
             }
         } else {
             if (clonedSelectedServices.includes(option)) {
-                updatedSelections = clonedSelectedServices.filter((selectedOption) => selectedOption !== option);
+                updatedSelections = clonedSelectedServices.filter(
+                    (selectedOption) => selectedOption !== option,
+                );
             } else {
                 updatedSelections = [...clonedSelectedServices, option];
-                if (updatedSelections.length === services.length - 1 && !updatedSelections.includes('Tất cả')) {
+                if (
+                    updatedSelections.length === services.length - 1 &&
+                    !updatedSelections.includes('Tất cả')
+                ) {
                     updatedSelections = ['Tất cả', ...updatedSelections];
                 }
             }
 
-            if (updatedSelections.includes('Tất cả') && updatedSelections.length !== services.length) {
-                updatedSelections = updatedSelections.filter((selectedOption) => selectedOption !== 'Tất cả');
+            if (
+                updatedSelections.includes('Tất cả') &&
+                updatedSelections.length !== services.length
+            ) {
+                updatedSelections = updatedSelections.filter(
+                    (selectedOption) => selectedOption !== 'Tất cả',
+                );
             }
         }
 
         setSelectedServices(updatedSelections);
     };
-
 
     const [pageNumber, setPageNumber] = useState(0);
 
@@ -181,7 +231,9 @@ const ReportContainer = () => {
             if (selectedNumber === 'Tất cả') {
                 return true;
             }
-            return number.number.substring(0, 3) === selectedNumber.substring(0, 3);
+            return (
+                number.number.substring(0, 3) === selectedNumber.substring(0, 3)
+            );
         })
         .filter((number) => {
             // Lọc theo selectedTime
@@ -202,7 +254,10 @@ const ReportContainer = () => {
             if (selectedStartDate && selectedEndDate) {
                 // @ts-ignore
                 const numberCreatedAt = number.createdAt.toDate(); // Chuyển đổi timestamp thành đối tượng Date
-                return numberCreatedAt >= selectedStartDate && numberCreatedAt <= selectedEndDate;
+                return (
+                    numberCreatedAt >= selectedStartDate &&
+                    numberCreatedAt <= selectedEndDate
+                );
             }
             return true;
         })
@@ -236,32 +291,36 @@ const ReportContainer = () => {
                             >
                                 {number.number}
                             </th>
-                            <th className='border border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start '>
+                            <th className="border border-orange-200 w-[250px] pl-6 pr-16 font-thin text-start ">
                                 {number.serviceSelect}
                             </th>
-                            <th className='border border-orange-200 px-6 font-thin text-start '>
-                                {/*// @ts-ignore*/}
-                                {dateFormat2(number.createdAt.toDate().toISOString())}
+                            <th className="border border-orange-200 px-6 font-thin text-start ">
+                                {dateFormat2(
+                                    // @ts-ignore
+                                    number?.createdAt.toDate().toISOString(),
+                                )}
                             </th>
-                            <th className='border border-orange-200 w-[160px] px-6 font-thin text-start '>
+                            <th className="border border-orange-200 w-[160px] px-6 font-thin text-start ">
                                 {number.status === 'WAITING' ? (
-                                    <div className='flex'>
-                                        <div className='w-3 h-3 mt-3 mr-3 rounded-full bg-blue-500'></div>
+                                    <div className="flex">
+                                        <div className="w-3 h-3 mt-3 mr-3 rounded-full bg-blue-500"></div>
                                         <span>Đang chờ</span>
                                     </div>
                                 ) : number.status === 'USED' ? (
-                                    <div className='flex'>
-                                        <div className='w-3 h-3 mt-3 mr-3 rounded-full bg-gray-500'></div>
+                                    <div className="flex">
+                                        <div className="w-3 h-3 mt-3 mr-3 rounded-full bg-gray-500"></div>
                                         <span>Đã sử dụng</span>
                                     </div>
                                 ) : (
-                                    <div className='flex'>
-                                        <div className='w-3 h-3 mt-3 mr-3 rounded-full bg-red-500'></div>
+                                    <div className="flex">
+                                        <div className="w-3 h-3 mt-3 mr-3 rounded-full bg-red-500"></div>
                                         <span>Bỏ qua</span>
                                     </div>
                                 )}
                             </th>
-                            <th className={` w-[108px] px-6 font-thin text-start ${roundedRight}`}>
+                            <th
+                                className={` w-[108px] px-6 font-thin text-start ${roundedRight}`}
+                            >
                                 {number.source}
                             </th>
                         </tr>
@@ -279,61 +338,89 @@ const ReportContainer = () => {
     return (
         <>
             {isLoading && <Loading />}
-            <div className='full-size flex relative'>
+            <div className="full-size flex relative">
                 <Navbar />
-                <div className='absolute top-2 z-30 right-2'>
+                <div className="absolute top-2 z-30 right-2">
                     <User />
                 </div>
-                <div className='w-full h-screen bg-gray-200'>
-                    <div className='h-32 mx-12 flex items-center mt-8'>
-                        <div className='text-gray-500 text-3xl font-bold font-primary'>
+                <div className="w-full h-screen bg-gray-200">
+                    <div className="h-32 mx-12 flex items-center mt-8">
+                        <div className="text-gray-500 text-3xl font-bold font-primary">
                             Báo cáo
                         </div>
-                        <ChevronRightIcon className='h-8 w-8 mx-6 stroke-gray-500' />
-                        <div className='text-orange-500 text-3xl font-bold font-primary'>
+                        <ChevronRightIcon className="h-8 w-8 mx-6 stroke-gray-500" />
+                        <div className="text-orange-500 text-3xl font-bold font-primary">
                             Lập báo cáo
                         </div>
                     </div>
 
-                    <div className='flex my-12 mr-72'>
-                        <div className='w-[400px] ml-10 z-20 flex flex-col'>
-                            <div className='text-3xl'>Chọn thời gian</div>
-                            <div className='flex space-x-4'>
-                                <div className='flex'>
-                                    <div className='flex flex-col'>
+                    <div className="flex my-12 mr-72">
+                        <div className="w-[400px] ml-10 z-20 flex flex-col">
+                            <div className="text-3xl">Chọn thời gian</div>
+                            <div className="flex space-x-4">
+                                <div className="flex">
+                                    <div className="flex flex-col">
                                         <Listbox>
                                             {({ open }) => (
                                                 <>
                                                     <Listbox.Button
                                                         className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
-                                                            open ? 'ring-2 ring-orange-100' : ''
+                                                            open
+                                                                ? 'ring-2 ring-orange-100'
+                                                                : ''
                                                         }`}
-                                                        onClick={handleToggleCalendar}
+                                                        onClick={
+                                                            handleToggleCalendar
+                                                        }
                                                     >
-                                                        <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
-                                                        <span className='block text-3xl text-gray-600 truncate'>
-                                                      {selectedStartDate ? selectedStartDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
-                                                    </span>
+                                                        <CalendarDaysIcon className="w-8 h-8 stroke-orange-alta mr-4 stroke-2" />
+                                                        <span className="block text-3xl text-gray-600 truncate">
+                                                            {selectedStartDate
+                                                                ? selectedStartDate.toLocaleDateString(
+                                                                      'en-GB',
+                                                                  )
+                                                                : new Date().toLocaleDateString(
+                                                                      'en-GB',
+                                                                  )}
+                                                        </span>
                                                     </Listbox.Button>
                                                     <Transition
                                                         show={isOpen}
-                                                        enter='transition ease-out duration-100'
-                                                        enterFrom='transform opacity-0 scale-95'
-                                                        enterTo='transform opacity-100 scale-100'
-                                                        leave='transition ease-in duration-75'
-                                                        leaveFrom='transform opacity-100 scale-100'
-                                                        leaveTo='transform opacity-0 scale-95'
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
                                                     >
                                                         <div
-                                                            className='absolute mt-1 w-[400px] bg-white border border-gray-300 rounded-xl shadow-lg h-[385px] overflow-auto focus:outline-none sm:text-sm'
+                                                            className="absolute mt-1 w-[400px] bg-white border border-gray-300 rounded-xl shadow-lg h-[385px] overflow-auto focus:outline-none sm:text-sm"
                                                             ref={calendarRef}
                                                         >
                                                             <Calendar
                                                                 // @ts-ignore
-                                                                onChange={(date: Date | Date[]) => handleDateChange(date)}
-                                                                value={selectedStartDate && selectedEndDate ? [selectedStartDate, selectedEndDate] : new Date()}
-                                                                selectRange={true}
-                                                                className='p-3'
+                                                                onChange={(
+                                                                    date:
+                                                                        | Date
+                                                                        | Date[],
+                                                                ) =>
+                                                                    handleDateChange(
+                                                                        date,
+                                                                    )
+                                                                }
+                                                                value={
+                                                                    selectedStartDate &&
+                                                                    selectedEndDate
+                                                                        ? [
+                                                                              selectedStartDate,
+                                                                              selectedEndDate,
+                                                                          ]
+                                                                        : new Date()
+                                                                }
+                                                                selectRange={
+                                                                    true
+                                                                }
+                                                                className="p-3"
                                                             />
                                                         </div>
                                                     </Transition>
@@ -341,35 +428,44 @@ const ReportContainer = () => {
                                             )}
                                         </Listbox>
                                     </div>
-                                    <div className='absolute-center mx-2 h-full'>
-                                        <ChevronRightIcon className='h-8 w-8 mt-4 stroke-gray-500' />
+                                    <div className="absolute-center mx-2 h-full">
+                                        <ChevronRightIcon className="h-8 w-8 mt-4 stroke-gray-500" />
                                     </div>
-                                    <div className='flex flex-col'>
+                                    <div className="flex flex-col">
                                         <Listbox>
                                             {({ open }) => (
                                                 <>
                                                     <Listbox.Button
                                                         className={`relative mt-4 flex rounded-xl w-[180px] bg-white border border-gray-300 shadow-sm pl-6 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-orange-100 focus:border-orange-100 sm:text-sm ${
-                                                            open ? 'ring-2 ring-orange-100' : ''
+                                                            open
+                                                                ? 'ring-2 ring-orange-100'
+                                                                : ''
                                                         }`}
-                                                        onClick={handleToggleCalendar}
+                                                        onClick={
+                                                            handleToggleCalendar
+                                                        }
                                                     >
-                                                        <CalendarDaysIcon className='w-8 h-8 stroke-orange-alta mr-4 stroke-2' />
-                                                        <span className='block text-3xl text-gray-600 truncate'>
-                                                    {selectedEndDate instanceof Date ? selectedEndDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
-                                                </span>
+                                                        <CalendarDaysIcon className="w-8 h-8 stroke-orange-alta mr-4 stroke-2" />
+                                                        <span className="block text-3xl text-gray-600 truncate">
+                                                            {selectedEndDate instanceof
+                                                            Date
+                                                                ? selectedEndDate.toLocaleDateString(
+                                                                      'en-GB',
+                                                                  )
+                                                                : new Date().toLocaleDateString(
+                                                                      'en-GB',
+                                                                  )}
+                                                        </span>
                                                     </Listbox.Button>
                                                     <Transition
                                                         show={isOpen}
-                                                        enter='transition ease-out duration-100'
-                                                        enterFrom='transform opacity-0 scale-95'
-                                                        enterTo='transform opacity-100 scale-100'
-                                                        leave='transition ease-in duration-75'
-                                                        leaveFrom='transform opacity-100 scale-100'
-                                                        leaveTo='transform opacity-0 scale-95'
-                                                    >
-
-                                                    </Transition>
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    ></Transition>
                                                 </>
                                             )}
                                         </Listbox>
@@ -379,71 +475,170 @@ const ReportContainer = () => {
                         </div>
                     </div>
 
-                    <div className='mx-12 text-start flex text-3xl font-light font-primary'>
-                        <table className='table-auto rounded-tl-2xl text-start drop-shadow-xl'>
+                    <div className="mx-12 text-start flex text-3xl font-light font-primary">
+                        <table className="table-auto rounded-tl-2xl text-start drop-shadow-xl">
                             <thead>
-                            <tr className='rounded-tl-2xl h-24 font-bold bg-orange-500 text-white'>
-                                <th className='border relative rounded-tl-3xl'>
-                                    <Listbox
-                                        value={selectedNumber}
-                                        onChange={setSelectedNumber}
-                                    >
-
-                                        {({ open }) => (
-                                            <>
-                                                <Listbox.Button
-                                                    className='relative '
-                                                    onClick={() => setNumberOpen(!numberOpen)}
-                                                >
-                                                    <div className='px-6 h-24 flex items-center w-[250px] font-bold text-start'>
-                                                        Số thứ tự
-                                                        <span className='absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none'>
-                                                        <svg
-                                                            className='h-10 w-10 text-white'
-                                                            fill='none'
-                                                            viewBox='0 0 20 20'
-                                                            stroke='currentColor'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                strokeWidth='2'
-                                                                d='M7 7l3-3 3 3m0 6l-3 3-3-3'
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    </div>
-                                                </Listbox.Button>
-                                                <Transition
-                                                    show={open}
-                                                    enter='transition ease-out duration-100'
-                                                    enterFrom='transform opacity-0 scale-95'
-                                                    enterTo='transform opacity-100 scale-100'
-                                                    leave='transition ease-in duration-75'
-                                                    leaveFrom='transform opacity-100 scale-100'
-                                                    leaveTo='transform opacity-0 scale-95'
-                                                >
-
-                                                    <Listbox.Options
-                                                        static
-                                                        className='absolute mt-8 w-[250px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'
+                                <tr className="rounded-tl-2xl h-24 font-bold bg-orange-500 text-white">
+                                    <th className="border relative rounded-tl-3xl">
+                                        <Listbox
+                                            value={selectedNumber}
+                                            onChange={setSelectedNumber}
+                                        >
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Button
+                                                        className="relative "
+                                                        onClick={() =>
+                                                            setNumberOpen(
+                                                                !numberOpen,
+                                                            )
+                                                        }
                                                     >
-                                                        {numberArr.map((option) => (
+                                                        <div className="px-6 h-24 flex items-center w-[250px] font-bold text-start">
+                                                            Số thứ tự
+                                                            <span className="absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none">
+                                                                <svg
+                                                                    className="h-10 w-10 text-white"
+                                                                    fill="none"
+                                                                    viewBox="0 0 20 20"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        show={open}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Listbox.Options
+                                                            static
+                                                            className="absolute w-[250px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm"
+                                                        >
+                                                            {numberArr.map(
+                                                                (option) => (
+                                                                    <Listbox.Option
+                                                                        key={
+                                                                            option
+                                                                        }
+                                                                        value={
+                                                                            option
+                                                                        }
+                                                                    >
+                                                                        {({
+                                                                            active,
+                                                                            selected,
+                                                                        }) => (
+                                                                            <div
+                                                                                className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                                    active
+                                                                                        ? 'bg-orange-100 '
+                                                                                        : ''
+                                                                                }`}
+                                                                            >
+                                                                                <span
+                                                                                    className={`block text-[18px] py-2.5 truncate ${
+                                                                                        selected
+                                                                                            ? 'font-medium'
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {
+                                                                                        option
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ),
+                                                            )}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    </th>
+                                    <th className="border relative">
+                                        <Listbox value={selectedServices}>
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Button
+                                                        className="relative "
+                                                        onClick={() =>
+                                                            setServiceOpen(
+                                                                !serviceOpen,
+                                                            )
+                                                        }
+                                                    >
+                                                        <div className="px-6 h-24 flex items-center w-[280px] font-bold text-start">
+                                                            Tên dịch vụ
+                                                            <span className="absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none">
+                                                                <svg
+                                                                    className="h-10 w-10 text-white"
+                                                                    fill="none"
+                                                                    viewBox="0 0 20 20"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        show={open}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Listbox.Options
+                                                            static
+                                                            className="absolute w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm"
+                                                        >
                                                             <Listbox.Option
-                                                                key={option}
-                                                                value={option}
+                                                                value={'Tất cả'}
                                                             >
                                                                 {({
-                                                                      active,
-                                                                      selected,
-                                                                  }) => (
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
                                                                     <div
-                                                                        className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Tất cả',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer w-full text-black text-[17px] select-none relative py-4 pl-3 ${
                                                                             active
-                                                                                ? 'bg-orange-100 '
+                                                                                ? 'bg-orange-100'
                                                                                 : ''
                                                                         }`}
                                                                     >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Tất cả',
+                                                                            )}
+                                                                        />
                                                                         <span
                                                                             className={`block text-[18px] py-2.5 truncate ${
                                                                                 selected
@@ -451,307 +646,40 @@ const ReportContainer = () => {
                                                                                     : 'font-normal'
                                                                             }`}
                                                                         >
-                                                                            {option}
+                                                                            Tất
+                                                                            cả
                                                                         </span>
                                                                     </div>
                                                                 )}
                                                             </Listbox.Option>
-                                                        ))}
-                                                    </Listbox.Options>
-                                                </Transition>
-                                            </>
-                                        )}
-                                    </Listbox>
-                                </th>
-                                <th className='border relative'>
-                                    <Listbox
-                                        value={selectedServices}
-                                    >
-
-                                        {({ open }) => (
-                                            <>
-                                                <Listbox.Button
-                                                    className='relative '
-                                                    onClick={() => setServiceOpen(!serviceOpen)}
-                                                >
-                                                    <div className='px-6 h-24 flex items-center w-[280px] font-bold text-start'>
-                                                        Tên dịch vụ
-                                                        <span className='absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none'>
-                                                        <svg
-                                                            className='h-10 w-10 text-white'
-                                                            fill='none'
-                                                            viewBox='0 0 20 20'
-                                                            stroke='currentColor'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                strokeWidth='2'
-                                                                d='M7 7l3-3 3 3m0 6l-3 3-3-3'
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    </div>
-                                                </Listbox.Button>
-                                                <Transition
-                                                    show={open}
-                                                    enter='transition ease-out duration-100'
-                                                    enterFrom='transform opacity-0 scale-95'
-                                                    enterTo='transform opacity-100 scale-100'
-                                                    leave='transition ease-in duration-75'
-                                                    leaveFrom='transform opacity-100 scale-100'
-                                                    leaveTo='transform opacity-0 scale-95'
-                                                >
-
-                                                    <Listbox.Options
-                                                        static
-                                                        className='absolute mt-8 w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'
-                                                    >
-                                                        <Listbox.Option
-                                                            value={'Tất cả'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Tất cả')}
-                                                                    className={`cursor-pointer w-full text-black text-[17px] select-none relative py-4 pl-3 ${active ? 'bg-orange-100' : ''}`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Tất cả')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                       Tất cả
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám tim mạch'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám tim mạch')}
-                                                                    className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám tim mạch')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                       Khám tim mạch
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám sản - Phụ khoa'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám sản - Phụ khoa')}
-                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám sản - Phụ khoa')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                      Khám sản - Phụ khoa
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám răng hàm mặt'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám răng hàm mặt')}
-                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám răng hàm mặt')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                       Khám răng hàm mặt
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám tai mũi họng'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám tai mũi họng')}
-                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám tai mũi họng')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                      Khám tai mũi họng
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám hô hấp'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám hô hấp')}
-                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám hô hấp')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                       Khám hô hấp
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                        <Listbox.Option
-                                                            value={'Khám tổng quát'}
-                                                        >
-                                                            {({
-                                                                  active,
-                                                                  selected,
-                                                              }) => (
-                                                                <div
-                                                                    onClick={() => handleServiceOptionChange('Khám tổng quát')}
-                                                                    className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
-                                                                        active
-                                                                            ? 'bg-orange-100 '
-                                                                            : ''
-                                                                    }`}
-                                                                >
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2'
-                                                                        checked={selectedServices.includes('Khám tổng quát')}
-                                                                    />
-                                                                    <span className={`block text-[18px] py-2.5 truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                                                       Khám tổng quát
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Listbox.Option>
-                                                    </Listbox.Options>
-                                                </Transition>
-                                            </>
-                                        )}
-                                    </Listbox>
-                                </th>
-                                <th className='border relative'>
-                                    <Listbox
-                                        value={selectedTime}
-                                        onChange={setSelectedTime}
-                                    >
-
-                                        {({ open }) => (
-                                            <>
-                                                <Listbox.Button
-                                                    className='relative '
-                                                    onClick={() => setTimeOpen(!timeOpen)}
-                                                >
-                                                    <div className='px-6 h-24 flex items-center w-[280px] font-bold text-start'>
-                                                        Thời gian cấp
-                                                        <span className='absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none'>
-                                                        <svg
-                                                            className='h-10 w-10 text-white'
-                                                            fill='none'
-                                                            viewBox='0 0 20 20'
-                                                            stroke='currentColor'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                strokeWidth='2'
-                                                                d='M7 7l3-3 3 3m0 6l-3 3-3-3'
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    </div>
-                                                </Listbox.Button>
-                                                <Transition
-                                                    show={open}
-                                                    enter='transition ease-out duration-100'
-                                                    enterFrom='transform opacity-0 scale-95'
-                                                    enterTo='transform opacity-100 scale-100'
-                                                    leave='transition ease-in duration-75'
-                                                    leaveFrom='transform opacity-100 scale-100'
-                                                    leaveTo='transform opacity-0 scale-95'
-                                                >
-
-                                                    <Listbox.Options
-                                                        static
-                                                        className='absolute mt-8 w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'
-                                                    >
-                                                        {uniqueTimes.map((option) => (
                                                             <Listbox.Option
-                                                                key={option}
-                                                                value={option}
+                                                                value={
+                                                                    'Khám tim mạch'
+                                                                }
                                                             >
                                                                 {({
-                                                                      active,
-                                                                      selected,
-                                                                  }) => (
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
                                                                     <div
-                                                                        className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám tim mạch',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer w-full flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                             active
                                                                                 ? 'bg-orange-100 '
                                                                                 : ''
                                                                         }`}
                                                                     >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám tim mạch',
+                                                                            )}
+                                                                        />
                                                                         <span
                                                                             className={`block text-[18px] py-2.5 truncate ${
                                                                                 selected
@@ -759,79 +687,41 @@ const ReportContainer = () => {
                                                                                     : 'font-normal'
                                                                             }`}
                                                                         >
-                                                                            {option}
+                                                                            Khám
+                                                                            tim
+                                                                            mạch
                                                                         </span>
                                                                     </div>
                                                                 )}
                                                             </Listbox.Option>
-                                                        ))}
-                                                    </Listbox.Options>
-                                                </Transition>
-                                            </>
-                                        )}
-                                    </Listbox>
-                                </th>
-                                <th className='border relative'>
-                                    <Listbox
-                                        value={selectedStatus}
-                                        onChange={setSelectedStatus}
-                                    >
-
-                                        {({ open }) => (
-                                            <>
-                                                <Listbox.Button
-                                                    className='relative '
-                                                    onClick={() => setStatusOpen(!statusOpen)}
-                                                >
-                                                    <div className='px-6 h-24 flex items-center w-[280px] font-bold text-start'>
-                                                        Trạng thái
-                                                        <span className='absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none'>
-                                                        <svg
-                                                            className='h-10 w-10 text-white'
-                                                            fill='none'
-                                                            viewBox='0 0 20 20'
-                                                            stroke='currentColor'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                strokeWidth='2'
-                                                                d='M7 7l3-3 3 3m0 6l-3 3-3-3'
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    </div>
-                                                </Listbox.Button>
-                                                <Transition
-                                                    show={open}
-                                                    enter='transition ease-out duration-100'
-                                                    enterFrom='transform opacity-0 scale-95'
-                                                    enterTo='transform opacity-100 scale-100'
-                                                    leave='transition ease-in duration-75'
-                                                    leaveFrom='transform opacity-100 scale-100'
-                                                    leaveTo='transform opacity-0 scale-95'
-                                                >
-
-                                                    <Listbox.Options
-                                                        static
-                                                        className='absolute mt-8 w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-68 overflow-auto focus:outline-none sm:text-sm'
-                                                    >
-                                                        {status.map((option) => (
                                                             <Listbox.Option
-                                                                key={option}
-                                                                value={option}
+                                                                value={
+                                                                    'Khám sản - Phụ khoa'
+                                                                }
                                                             >
                                                                 {({
-                                                                      active,
-                                                                      selected,
-                                                                  }) => (
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
                                                                     <div
-                                                                        className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám sản - Phụ khoa',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                             active
                                                                                 ? 'bg-orange-100 '
                                                                                 : ''
                                                                         }`}
                                                                     >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám sản - Phụ khoa',
+                                                                            )}
+                                                                        />
                                                                         <span
                                                                             className={`block text-[18px] py-2.5 truncate ${
                                                                                 selected
@@ -839,79 +729,43 @@ const ReportContainer = () => {
                                                                                     : 'font-normal'
                                                                             }`}
                                                                         >
-                                                                            {option}
+                                                                            Khám
+                                                                            sản
+                                                                            -
+                                                                            Phụ
+                                                                            khoa
                                                                         </span>
                                                                     </div>
                                                                 )}
                                                             </Listbox.Option>
-                                                        ))}
-                                                    </Listbox.Options>
-                                                </Transition>
-                                            </>
-                                        )}
-                                    </Listbox>
-                                </th>
-                                <th className='border relative rounded-tr-3xl'>
-                                    <Listbox
-                                        value={selectedSource}
-                                        onChange={setSelectedSource}
-                                    >
-
-                                        {({ open }) => (
-                                            <>
-                                                <Listbox.Button
-                                                    className='relative '
-                                                    onClick={() => setSourceOpen(!sourceOpen)}
-                                                >
-                                                    <div className='px-6 h-24 flex items-center w-[280px] font-bold text-start'>
-                                                        Nguồn cấp
-                                                        <span className='absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none'>
-                                                        <svg
-                                                            className='h-10 w-10 text-white'
-                                                            fill='none'
-                                                            viewBox='0 0 20 20'
-                                                            stroke='currentColor'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                strokeWidth='2'
-                                                                d='M7 7l3-3 3 3m0 6l-3 3-3-3'
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    </div>
-                                                </Listbox.Button>
-                                                <Transition
-                                                    show={open}
-                                                    enter='transition ease-out duration-100'
-                                                    enterFrom='transform opacity-0 scale-95'
-                                                    enterTo='transform opacity-100 scale-100'
-                                                    leave='transition ease-in duration-75'
-                                                    leaveFrom='transform opacity-100 scale-100'
-                                                    leaveTo='transform opacity-0 scale-95'
-                                                >
-
-                                                    <Listbox.Options
-                                                        static
-                                                        className='absolute mt-8 w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm'
-                                                    >
-                                                        {source.map((option) => (
                                                             <Listbox.Option
-                                                                key={option}
-                                                                value={option}
+                                                                value={
+                                                                    'Khám răng hàm mặt'
+                                                                }
                                                             >
                                                                 {({
-                                                                      active,
-                                                                      selected,
-                                                                  }) => (
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
                                                                     <div
-                                                                        className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám răng hàm mặt',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
                                                                             active
                                                                                 ? 'bg-orange-100 '
                                                                                 : ''
                                                                         }`}
                                                                     >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám răng hàm mặt',
+                                                                            )}
+                                                                        />
                                                                         <span
                                                                             className={`block text-[18px] py-2.5 truncate ${
                                                                                 selected
@@ -919,43 +773,438 @@ const ReportContainer = () => {
                                                                                     : 'font-normal'
                                                                             }`}
                                                                         >
-                                                                            {option}
+                                                                            Khám
+                                                                            răng
+                                                                            hàm
+                                                                            mặt
                                                                         </span>
                                                                     </div>
                                                                 )}
                                                             </Listbox.Option>
-                                                        ))}
-                                                    </Listbox.Options>
-                                                </Transition>
-                                            </>
-                                        )}
-                                    </Listbox>
-                                </th>
-                            </tr>
+                                                            <Listbox.Option
+                                                                value={
+                                                                    'Khám tai mũi họng'
+                                                                }
+                                                            >
+                                                                {({
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
+                                                                    <div
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám tai mũi họng',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                            active
+                                                                                ? 'bg-orange-100 '
+                                                                                : ''
+                                                                        }`}
+                                                                    >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám tai mũi họng',
+                                                                            )}
+                                                                        />
+                                                                        <span
+                                                                            className={`block text-[18px] py-2.5 truncate ${
+                                                                                selected
+                                                                                    ? 'font-medium'
+                                                                                    : 'font-normal'
+                                                                            }`}
+                                                                        >
+                                                                            Khám
+                                                                            tai
+                                                                            mũi
+                                                                            họng
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </Listbox.Option>
+                                                            <Listbox.Option
+                                                                value={
+                                                                    'Khám hô hấp'
+                                                                }
+                                                            >
+                                                                {({
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
+                                                                    <div
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám hô hấp',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                            active
+                                                                                ? 'bg-orange-100 '
+                                                                                : ''
+                                                                        }`}
+                                                                    >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám hô hấp',
+                                                                            )}
+                                                                        />
+                                                                        <span
+                                                                            className={`block text-[18px] py-2.5 truncate ${
+                                                                                selected
+                                                                                    ? 'font-medium'
+                                                                                    : 'font-normal'
+                                                                            }`}
+                                                                        >
+                                                                            Khám
+                                                                            hô
+                                                                            hấp
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </Listbox.Option>
+                                                            <Listbox.Option
+                                                                value={
+                                                                    'Khám tổng quát'
+                                                                }
+                                                            >
+                                                                {({
+                                                                    active,
+                                                                    selected,
+                                                                }) => (
+                                                                    <div
+                                                                        onClick={() =>
+                                                                            handleServiceOptionChange(
+                                                                                'Khám tổng quát',
+                                                                            )
+                                                                        }
+                                                                        className={`cursor-pointer flex text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                            active
+                                                                                ? 'bg-orange-100 '
+                                                                                : ''
+                                                                        }`}
+                                                                    >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="form-checkbox mr-2 appearance-none w-9 h-9 border-2 border-blue-500 rounded-lg checked:bg-blue-500 checked:border-blue-500 absolute right-3 top-1/2 transform -translate-y-1/2"
+                                                                            checked={selectedServices.includes(
+                                                                                'Khám tổng quát',
+                                                                            )}
+                                                                        />
+                                                                        <span
+                                                                            className={`block text-[18px] py-2.5 truncate ${
+                                                                                selected
+                                                                                    ? 'font-medium'
+                                                                                    : 'font-normal'
+                                                                            }`}
+                                                                        >
+                                                                            Khám
+                                                                            tổng
+                                                                            quát
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </Listbox.Option>
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    </th>
+                                    <th className="border relative">
+                                        <Listbox
+                                            value={selectedTime}
+                                            onChange={setSelectedTime}
+                                        >
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Button
+                                                        className="relative "
+                                                        onClick={() =>
+                                                            setTimeOpen(
+                                                                !timeOpen,
+                                                            )
+                                                        }
+                                                    >
+                                                        <div className="px-6 h-24 flex items-center w-[280px] font-bold text-start">
+                                                            Thời gian cấp
+                                                            <span className="absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none">
+                                                                <svg
+                                                                    className="h-10 w-10 text-white"
+                                                                    fill="none"
+                                                                    viewBox="0 0 20 20"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        show={open}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Listbox.Options
+                                                            static
+                                                            className="absolute w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm"
+                                                        >
+                                                            {uniqueTimes.map(
+                                                                (option) => (
+                                                                    <Listbox.Option
+                                                                        key={
+                                                                            option
+                                                                        }
+                                                                        value={
+                                                                            option
+                                                                        }
+                                                                    >
+                                                                        {({
+                                                                            active,
+                                                                            selected,
+                                                                        }) => (
+                                                                            <div
+                                                                                className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                                    active
+                                                                                        ? 'bg-orange-100 '
+                                                                                        : ''
+                                                                                }`}
+                                                                            >
+                                                                                <span
+                                                                                    className={`block text-[18px] py-2.5 truncate ${
+                                                                                        selected
+                                                                                            ? 'font-medium'
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {
+                                                                                        option
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ),
+                                                            )}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    </th>
+                                    <th className="border relative">
+                                        <Listbox
+                                            value={selectedStatus}
+                                            onChange={setSelectedStatus}
+                                        >
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Button
+                                                        className="relative "
+                                                        onClick={() =>
+                                                            setStatusOpen(
+                                                                !statusOpen,
+                                                            )
+                                                        }
+                                                    >
+                                                        <div className="px-6 h-24 flex items-center w-[280px] font-bold text-start">
+                                                            Trạng thái
+                                                            <span className="absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none">
+                                                                <svg
+                                                                    className="h-10 w-10 text-white"
+                                                                    fill="none"
+                                                                    viewBox="0 0 20 20"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        show={open}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Listbox.Options
+                                                            static
+                                                            className="absolute w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-68 overflow-auto focus:outline-none sm:text-sm"
+                                                        >
+                                                            {status.map(
+                                                                (option) => (
+                                                                    <Listbox.Option
+                                                                        key={
+                                                                            option
+                                                                        }
+                                                                        value={
+                                                                            option
+                                                                        }
+                                                                    >
+                                                                        {({
+                                                                            active,
+                                                                            selected,
+                                                                        }) => (
+                                                                            <div
+                                                                                className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                                    active
+                                                                                        ? 'bg-orange-100 '
+                                                                                        : ''
+                                                                                }`}
+                                                                            >
+                                                                                <span
+                                                                                    className={`block text-[18px] py-2.5 truncate ${
+                                                                                        selected
+                                                                                            ? 'font-medium'
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {
+                                                                                        option
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ),
+                                                            )}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    </th>
+                                    <th className="border relative rounded-tr-3xl">
+                                        <Listbox
+                                            value={selectedSource}
+                                            onChange={setSelectedSource}
+                                        >
+                                            {({ open }) => (
+                                                <>
+                                                    <Listbox.Button
+                                                        className="relative "
+                                                        onClick={() =>
+                                                            setSourceOpen(
+                                                                !sourceOpen,
+                                                            )
+                                                        }
+                                                    >
+                                                        <div className="px-6 h-24 flex items-center w-[280px] font-bold text-start">
+                                                            Nguồn cấp
+                                                            <span className="absolute inset-y-0 right-4 flex items-center pr-2 pointer-events-none">
+                                                                <svg
+                                                                    className="h-10 w-10 text-white"
+                                                                    fill="none"
+                                                                    viewBox="0 0 20 20"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        show={open}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Listbox.Options
+                                                            static
+                                                            className="absolute w-[280px] text-start bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm"
+                                                        >
+                                                            {source.map(
+                                                                (option) => (
+                                                                    <Listbox.Option
+                                                                        key={
+                                                                            option
+                                                                        }
+                                                                        value={
+                                                                            option
+                                                                        }
+                                                                    >
+                                                                        {({
+                                                                            active,
+                                                                            selected,
+                                                                        }) => (
+                                                                            <div
+                                                                                className={`cursor-pointer text-black text-[17px] select-none relative py-4 pl-3 pr-9 ${
+                                                                                    active
+                                                                                        ? 'bg-orange-100 '
+                                                                                        : ''
+                                                                                }`}
+                                                                            >
+                                                                                <span
+                                                                                    className={`block text-[18px] py-2.5 truncate ${
+                                                                                        selected
+                                                                                            ? 'font-medium'
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {
+                                                                                        option
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ),
+                                                            )}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </>
+                                            )}
+                                        </Listbox>
+                                    </th>
+                                </tr>
                             </thead>
-                            <tbody>
-                            {displayNumbers}
-                            </tbody>
+                            <tbody>{displayNumbers}</tbody>
                         </table>
 
-                        <button
-                            className='flex flex-col transition-colors duration-300 group cursor-pointer hover:bg-orange-alta absolute right-0 justify-center items-center w-40 h-48 bg-orange-100 rounded-tl-2xl rounded-bl-2xl drop-shadow-xl shadow-xl'
-                        >
-                            <div className='w-12 h-12 absolute-center bg-orange-500 group-hover:bg-orange-100 rounded-xl hover:text-white'>
-                                <FolderArrowDownIcon className='w-9 h-9 fill-orange-alta stroke-white group-hover:stroke-orange-alta group-hover:fill-orange-200 stroke-2' />
+                        <button className="flex flex-col transition-colors duration-300 group cursor-pointer hover:bg-orange-alta absolute right-0 justify-center items-center w-40 h-48 bg-orange-100 rounded-tl-2xl rounded-bl-2xl drop-shadow-xl shadow-xl">
+                            <div className="w-12 h-12 absolute-center bg-orange-500 group-hover:bg-orange-100 rounded-xl hover:text-white">
+                                <FolderArrowDownIcon className="w-9 h-9 fill-orange-alta stroke-white group-hover:stroke-orange-alta group-hover:fill-orange-200 stroke-2" />
                             </div>
-                            <div className='text-center text-orange-500 group-hover:text-orange-100 mt-4 w-36'>
+                            <div className="text-center text-orange-500 group-hover:text-orange-100 mt-4 w-36">
                                 Tải về
                             </div>
                         </button>
                     </div>
-                    <div className='flex w-full justify-end'>
+                    <div className="flex w-full justify-end">
                         <ReactPaginate
                             previousLabel={
-                                <ChevronLeftIcon className='w-10 h-10' />
+                                <ChevronLeftIcon className="w-10 h-10" />
                             }
                             nextLabel={
-                                <ChevronRightIcon className='w-10 h-10' />
+                                <ChevronRightIcon className="w-10 h-10" />
                             }
                             pageCount={pageCount}
                             onPageChange={changePage}

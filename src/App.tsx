@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Route,
+    Routes,
+    useLocation,
+} from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/shared/MainPage';
 import ForgotPassword from './components/pages/ForgotPassword';
@@ -25,9 +30,9 @@ const AppContent = () => {
     const numberId = location.state?.id;
 
     return (
-        <div className='full-size flex'>
+        <div className="full-size flex">
             <Toaster
-                position='top-center'
+                position="top-center"
                 reverseOrder={false}
                 toastOptions={{
                     style: {
@@ -36,71 +41,32 @@ const AppContent = () => {
                 }}
             />
             <Routes>
-                <Route
-                    path='/login'
-                    element={<LoginPage />}
-                />
-                <Route
-                    path='/'
-                    element={<MainPage />}
-                />
-                <Route
-                    path='/reset-password'
-                    element={<ResetPassword />}
-                />
-                <Route
-                    path='/forgot-password'
-                    element={<ForgotPassword />}
-                />
-                <Route
-                    path='/user'
-                    element={<UserInfo />}
-                />
-                <Route
-                    path='/add-device'
-                    element={<AddDevice />}
-                />
-                <Route
-                    path={`/device/:params`}
-                    element={<DevicePage />}
-                />
-                <Route
-                    path='/devices'
-                    element={<DeviceContainer />}
-                />
-                <Route
-                    path='/services'
-                    element={<ServiceContainer />}
-                />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/" element={<MainPage />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/user" element={<UserInfo />} />
+                <Route path="/add-device" element={<AddDevice />} />
+                <Route path={`/device/:params`} element={<DevicePage />} />
+                <Route path="/devices" element={<DeviceContainer />} />
+                <Route path="/services" element={<ServiceContainer />} />
                 {numberData && numberId ? (
                     <Route
-                        path='/numbers'
-                        element={<NumberDetail
-                            numberData={numberData}
-                            numberId={numberId}
-                        />}
+                        path="/numbers"
+                        element={
+                            <NumberDetail
+                                numberData={numberData}
+                                numberId={numberId}
+                            />
+                        }
                     />
                 ) : (
-                    <Route
-                        path='/numbers'
-                        element={<NumberContainer />}
-                    />
+                    <Route path="/numbers" element={<NumberContainer />} />
                 )}
-                <Route
-                    path='/reports'
-                    element={<ReportContainer />}
-                /> <Route
-                path='/roles'
-                element={<RoleContainer />}
-            />
-                <Route
-                    path='/accounts'
-                    element={<AccountContainer />}
-                />
-                <Route
-                    path='/logs'
-                    element={<LogContainer />}
-                />
+                <Route path="/reports" element={<ReportContainer />} />
+                <Route path="/roles" element={<RoleContainer />} />
+                <Route path="/accounts" element={<AccountContainer />} />
+                <Route path="/logs" element={<LogContainer />} />
             </Routes>
         </div>
     );
